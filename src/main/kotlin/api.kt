@@ -1,12 +1,10 @@
 package net.emaze.pongo
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.lang.RuntimeException
 import java.util.*
 
-@JsonIgnoreProperties("metadata\$emaze_pongo")
-abstract class Identifiable(@JsonIgnore internal var metadata: Metadata? = null) {
+abstract class Identifiable(@JsonIgnore var metadata: Metadata? = null) {
 
     data class Metadata(val identity: Long, val version: Long)
 
