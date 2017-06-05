@@ -73,7 +73,7 @@ open class PostgresJsonRepository<T : Identifiable>(
     override fun findAllLike(example: Any): List<T> = findAll("where data @> ?", Jsonb(example))
 
     override fun findFirst(query: String, vararg params: Any) =
-        Optional.ofNullable(findAll(query, *params).getOrElse(0, { null }))
+        Optional.ofNullable(findAll("$query limit 1", *params).getOrElse(0, { null }))
 
     override fun findFirstLike(example: Any) = findFirst("where data @> ?", Jsonb(example))
 
