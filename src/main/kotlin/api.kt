@@ -42,11 +42,15 @@ interface EntityRepository<T : Identifiable> {
 
     fun deleteAll()
 
-    fun findAll(query: String = "", vararg params: Any): List<T>
+    fun findAll(): List<T> = findAll()
+
+    fun findAll(query: String, vararg params: Any): List<T>
 
     fun findAllLike(example: Any): List<T>
 
-    fun findFirst(query: String = "", vararg params: Any): Optional<T>
+    fun findFirst(): Optional<T> = findFirst("")
+
+    fun findFirst(query: String, vararg params: Any): Optional<T>
 
     fun findFirstLike(example: Any): Optional<T>
 }

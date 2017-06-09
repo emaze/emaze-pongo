@@ -8,7 +8,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.postgresql.ds.PGSimpleDataSource
 import java.util.*
-import kotlin.reflect.KClass
 
 object Context {
 
@@ -19,7 +18,7 @@ object Context {
     }
     val mapper = ObjectMapper().registerModule(KotlinModule())!!
 
-    fun <T : Identifiable> repository(cls: KClass<T>) = PostgresJsonRepository(cls.java, dataSource, mapper).apply {
+    fun <T : Identifiable> repository(cls: Class<T>) = PostgresJsonRepository(cls, dataSource, mapper).apply {
         createTable().createIndex().deleteAll()
     }
 }
@@ -28,7 +27,7 @@ class ITPostgresJsonRepository {
 
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
-    val repository = Context.repository(SomeEntity::class)
+    val repository = Context.repository(SomeEntity::class.java)
 
     @Test
     fun itCanInsertNewEntity() {
