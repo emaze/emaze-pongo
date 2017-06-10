@@ -48,8 +48,8 @@ class ITPostgresJsonRepository {
     @Test(expected = OptimisticLockException::class)
     fun itCannotUpdateAnOldVersionOfEntity() {
         val entity = repository.save(SomeEntity(1, 2))
-        repository.save(entity.copy(x = 3).attachTo(entity))
-        repository.save(entity.copy(x = 4).attachTo(entity))
+        repository.save(entity.copy(x = 3).attach(entity))
+        repository.save(entity.copy(x = 4).attach(entity))
     }
 
     @Test
@@ -130,7 +130,7 @@ class ITPostgresJsonRepository {
     fun itCanMapFirstByExample() {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
-        repository.mapFirstLike(mapOf("x" to 1)) { entity -> SomeEntity(entity.x, 0).attachTo(entity) }
+        repository.mapFirstLike(mapOf("x" to 1)) { entity -> SomeEntity(entity.x, 0).attach(entity) }
         val got = repository.findFirstLike(mapOf("x" to 1))
         assertEquals(Optional.of(SomeEntity(1, 0)), got)
     }

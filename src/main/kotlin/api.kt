@@ -36,7 +36,7 @@ fun <T : Identifiable> T.attach(metadata: Identifiable.Metadata?): T {
     return this
 }
 
-fun <T : Identifiable> T.attachTo(identifiable: Identifiable): T {
+fun <T : Identifiable> T.attach(identifiable: Identifiable): T {
     this.metadata = identifiable.metadata
     return this
 }

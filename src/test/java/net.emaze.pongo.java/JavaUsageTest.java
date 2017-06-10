@@ -34,7 +34,7 @@ public class JavaUsageTest {
     @Test
     public void itCanUpdateAnExistentEntity() {
         final JavaEntity entity = repository.save(new JavaEntity(1, 2));
-        final JavaEntity newEntity = repository.save(Pongo.attachTo(new JavaEntity(2, 3), entity));
+        final JavaEntity newEntity = repository.save(Pongo.attach(new JavaEntity(2, 3), entity));
         final List<JavaEntity> got = repository.findAll();
         Assert.assertEquals(1, got.size());
     }
