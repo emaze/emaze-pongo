@@ -17,11 +17,11 @@ abstract class Identifiable(@JsonIgnore var metadata: Metadata? = null) {
      * Two Identifiables are considered equals if they have the same class and the same metadata.
      */
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
+        if (other === this) return true
         if (other === null) return false
         if (other !is Identifiable) return false
         if (this.javaClass != other.javaClass) return false
-        return this.metadata == other.metadata
+        return this.metadata != null && other.metadata != null && this.metadata == other.metadata
     }
 
     override fun hashCode() = metadata?.hashCode() ?: 0
