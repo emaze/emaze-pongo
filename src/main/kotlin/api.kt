@@ -1,3 +1,5 @@
+@file:JvmName("Pongo")
+
 package net.emaze.pongo
 
 import com.fasterxml.jackson.annotation.JsonIgnore
