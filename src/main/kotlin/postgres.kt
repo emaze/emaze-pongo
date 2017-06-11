@@ -2,6 +2,7 @@ package net.emaze.pongo.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.emaze.pongo.EntityRepository
+import net.emaze.pongo.EntityRepositoryFactory
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.OptimisticLockException
 import net.emaze.pongo.jdbc.execute
@@ -13,6 +14,14 @@ import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.util.*
 import javax.sql.DataSource
+
+class PostgresJsonRepositoryFactory(
+    val dataSource: DataSource,
+    val mapper: ObjectMapper
+) : EntityRepositoryFactory {
+
+    override fun <T : Identifiable> create(cls: Class<T>) = PostgresJsonRepository(cls, dataSource, mapper)
+}
 
 open class PostgresJsonRepository<T : Identifiable>(
     val cls: Class<T>,

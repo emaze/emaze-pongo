@@ -2,10 +2,10 @@ package net.emaze.pongo.java;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.emaze.pongo.EntityRepository;
 import net.emaze.pongo.Identifiable;
 import net.emaze.pongo.Pongo;
 import net.emaze.pongo.postgres.Context;
+import net.emaze.pongo.postgres.PostgresJsonRepository;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,7 +25,11 @@ public class JavaUsageTest {
         }
     }
 
-    final EntityRepository<JavaEntity> repository = Context.INSTANCE.repository(JavaEntity.class);
+    final PostgresJsonRepository<JavaEntity> repository = Context.INSTANCE.getFactory().create(JavaEntity.class);
+
+    {
+        repository.createTable().deleteAll();
+    }
 
     @Test
     public void itCanInsertNewEntity() {

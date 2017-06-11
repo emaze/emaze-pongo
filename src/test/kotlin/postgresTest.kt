@@ -2,7 +2,10 @@ package net.emaze.pongo.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import net.emaze.pongo.*
+import net.emaze.pongo.Identifiable
+import net.emaze.pongo.OptimisticLockException
+import net.emaze.pongo.attach
+import net.emaze.pongo.mapFirstLike
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -10,24 +13,22 @@ import org.postgresql.ds.PGSimpleDataSource
 import java.util.*
 
 object Context {
-
     val port = System.getenv("PONGO_POSTGRES_PORT")?.toInt() ?: 5432
     val dataSource = PGSimpleDataSource().apply {
         user = "postgres"
         url = "jdbc:postgresql://localhost:$port/pongo"
     }
     val mapper = ObjectMapper().registerModule(KotlinModule())!!
-
-    fun <T : Identifiable> repository(cls: Class<T>) = PostgresJsonRepository(cls, dataSource, mapper).apply {
-        createTable().createIndex().deleteAll()
-    }
+    val factory = PostgresJsonRepositoryFactory(dataSource, mapper)
 }
 
 class ITPostgresJsonRepository {
 
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
-    val repository = Context.repository(SomeEntity::class.java)
+    val repository = Context.factory.create(SomeEntity::class.java).apply {
+        createTable().createIndex().deleteAll()
+    }
 
     @Test
     fun itCanInsertNewEntity() {

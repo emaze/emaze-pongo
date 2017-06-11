@@ -47,10 +47,13 @@ public interface UserRepository extends EntityRepository<User> {
 @Configuration
 public class Config {
     @Bean
-    public UserRepository users(DataSource dataSource, ObjectMapper mapper) {
-        return (UserRepository) new PostgresJsonRepository<>(User.class, dataSource, mapper)
-            .createTable()
-            .createIndex();
+    public EntityRepositoryFactory entityRepositories(DataSource dataSource, ObjectMapper mapper) {
+        return new PostgresJsonRepositoryFactory(dataSource, mapper);
+    }
+    
+    @Bean
+    public UserRepository users(PostgresJsonRepositoryFactory factory) {
+        return (UserRepository) factory.create(User.class).createTable().createIndex();
     }
 }
 ```

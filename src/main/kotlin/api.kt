@@ -96,3 +96,12 @@ interface EntityRepository<T : Identifiable> {
     fun findFirstLike(example: Any): Optional<T>
 }
 
+/**
+ * The factory of entity repositories.
+ */
+interface EntityRepositoryFactory {
+
+    fun <T : Identifiable> create(cls: Class<T>): EntityRepository<T>
+}
+
+inline fun <reified T : Identifiable> EntityRepositoryFactory.create(): EntityRepository<T> = create(T::class.java)
