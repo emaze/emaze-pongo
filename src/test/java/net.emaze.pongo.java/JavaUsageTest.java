@@ -1,5 +1,7 @@
 package net.emaze.pongo.java;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.emaze.pongo.EntityRepository;
 import net.emaze.pongo.Identifiable;
 import net.emaze.pongo.Pongo;
@@ -16,7 +18,8 @@ public class JavaUsageTest {
         final int x;
         final int y;
 
-        JavaEntity(int x, int y) {
+        @JsonCreator
+        JavaEntity(@JsonProperty("x") int x, @JsonProperty("y") int y) {
             this.x = x;
             this.y = y;
         }
