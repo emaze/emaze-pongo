@@ -68,7 +68,7 @@ interface EntityRepository<T : Identifiable> {
     /**
      * Get all the entities.
      */
-    fun findAll(): List<T> = findAll()
+    fun findAll(): List<T> = findAll("")
 
     /**
      * Get all the entities satisfying the query.
