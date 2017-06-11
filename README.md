@@ -35,7 +35,11 @@ public class User extends Identifiable {
 public interface UserRepository extends EntityRepository<User> {
 
    default Optional<User> findByName(String name) {
-       return findFirst("where data->>'name' = ?", name);
+       return findFirstLike(singletonMap("name", name));
+              // or 
+              findFirst("where data @> ?", json(singletonMap("name", name)));
+              // or
+              findFirst("where data->>'name' = ?", name);
    }
 }
 
@@ -49,8 +53,6 @@ public class Config {
             .createIndex();
     }
 }
-
-// Use it!
 ```
 
 ## Development
