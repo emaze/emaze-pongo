@@ -62,7 +62,7 @@ open class PostgresJsonRepository<T : Identifiable>(
     override fun findFirstLike(example: Any) = findFirst("where data @> ?", json(example))
 
     override fun delete(entity: T) {
-        logger.debug("Deleting entity {} of ID {} from {}", entity, entity.metadata, tableName)
+        logger.debug("Deleting entity {} with {} from {}", entity, entity.metadata, tableName)
         val identity = entity.metadata?.identity ?: throw IllegalArgumentException("Cannot delete the transient object $entity")
         val deleted = dataSource.update("delete from $tableName where id = ?", identity)
         if (deleted == 0) throw IllegalStateException("Cannot delete not existing entity $entity of ID ${entity.metadata}")
@@ -82,7 +82,7 @@ open class PostgresJsonRepository<T : Identifiable>(
     }
 
     private fun update(entity: T): T {
-        logger.debug("Updating entity {} of ID {} into {}", entity.metadata, tableName)
+        logger.debug("Updating entity {} with {} into {}", entity, entity.metadata, tableName)
         val metadata = entity.metadata ?: throw IllegalArgumentException("Cannot update the transient object $entity")
         entity.metadata = dataSource.query("""
                 update $tableName
