@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class JavaUsageTest {
+public class ITJavaUsage {
 
     static class JavaEntity extends Identifiable {
 
