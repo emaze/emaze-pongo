@@ -18,7 +18,7 @@ object Context {
         user = "postgres"
         url = "jdbc:postgresql://localhost:$port/pongo"
     }
-    val mapper = ObjectMapper().registerModule(KotlinModule())!!
+    val mapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
     val factory = PostgresJsonRepositoryFactory(dataSource, mapper)
 }
 
