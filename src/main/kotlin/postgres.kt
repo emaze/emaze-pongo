@@ -23,8 +23,10 @@ class PostgresJsonRepositoryFactory(
     override fun <T : Identifiable> create(cls: Class<T>) = PostgresJsonRepository(cls, dataSource, mapper)
 }
 
+inline fun <reified T : Identifiable> PostgresJsonRepositoryFactory.create(): PostgresJsonRepository<T> = create(T::class.java)
+
 open class PostgresJsonRepository<T : Identifiable>(
-    val cls: Class<T>,
+    override val entityClass: Class<T>,
     val dataSource: DataSource,
     val mapper: ObjectMapper
 ) : EntityRepository<T> {
@@ -34,7 +36,7 @@ open class PostgresJsonRepository<T : Identifiable>(
     }
 
     val tableName: String by lazy {
-        cls.simpleName!!
+        entityClass.simpleName!!
             .decapitalize()
             .replace("[A-Z]".toRegex(), { match -> "_${match.value.toLowerCase()}" })
     }

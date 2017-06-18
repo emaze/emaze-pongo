@@ -45,6 +45,8 @@ class OptimisticLockException(message: String) : RuntimeException(message)
 
 interface EntityRepository<T : Identifiable> {
 
+    val entityClass: Class<T>
+
     /**
      * Save or update the entity.
      *
