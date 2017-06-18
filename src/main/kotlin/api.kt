@@ -73,7 +73,7 @@ interface EntityRepository<T : Identifiable> {
     /**
      * Get all the entities satisfying the query.
      */
-    fun findAll(query: String, vararg params: Any): List<T>
+    fun findAll(query: String, vararg params: Any?): List<T>
 
     /**
      * Get all the entities with the properties equals to the example's ones.
@@ -88,7 +88,7 @@ interface EntityRepository<T : Identifiable> {
     /**
      * Get the first entity satisfying the query.
      */
-    fun findFirst(query: String, vararg params: Any): Optional<T>
+    fun findFirst(query: String, vararg params: Any?): Optional<T>
 
     /**
      * Get the first entity with the properties equals to the example's ones.

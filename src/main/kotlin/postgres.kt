@@ -56,16 +56,16 @@ open class PostgresJsonRepository<T : Identifiable>(
     override fun save(entity: T): T =
         entity.metadata?.let { update(entity) } ?: insert(entity)
 
-    override fun findAll(query: String, vararg params: Any): List<T> =
+    override fun findAll(query: String, vararg params: Any?): List<T> =
         dataSource.query("select data, id, version from $tableName $query", *params) { result ->
-            mapper.readValue(result.getString(1), cls).apply {
+            mapper.readValue(result.getString(1), entityClass).apply {
                 metadata = Identifiable.Metadata(identity = result.getLong(2), version = result.getLong(3))
             }
         }
 
     override fun findAllLike(example: Any): List<T> = findAll("where data @> ?", json(example))
 
-    override fun findFirst(query: String, vararg params: Any) =
+    override fun findFirst(query: String, vararg params: Any?) =
         Optional.ofNullable(findAll("$query limit 1", *params).getOrElse(0, { null }))
 
     override fun findFirstLike(example: Any) = findFirst("where data @> ?", json(example))
