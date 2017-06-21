@@ -2,9 +2,7 @@ package net.emaze.pongo.annotation;
 
 import net.emaze.pongo.EntityRepository;
 import net.emaze.pongo.Identifiable;
-import org.junit.Ignore;
 import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -20,7 +18,6 @@ public class JavaAnnotationBasedRepositoryTest {
     }
 
     @Test
-    @Ignore
     public void proxyRepositoryIsAbleToInvokeDefaultMethods() {
         final EntityRepository repository = mock(EntityRepository.class);
         final Entities proxy = AnnotatedRepository.create(repository, Entities.class);
