@@ -20,7 +20,7 @@ class PostgresJsonRepositoryFactory(
     val mapper: ObjectMapper
 ) : EntityRepositoryFactory {
 
-    override fun <T : Identifiable> create(cls: Class<T>) = PostgresJsonRepository(cls, dataSource, mapper)
+    override fun <T : Identifiable> create(entityClass: Class<T>) = PostgresJsonRepository(entityClass, dataSource, mapper)
 }
 
 inline fun <reified T : Identifiable> PostgresJsonRepositoryFactory.create(): PostgresJsonRepository<T> = create(T::class.java)

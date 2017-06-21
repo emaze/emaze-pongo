@@ -3,6 +3,8 @@
 package net.emaze.pongo
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import net.emaze.pongo.annotation.handlerFactory
+import net.emaze.pongo.proxy.delegate
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.util.*
@@ -103,7 +105,13 @@ interface EntityRepository<T : Identifiable> {
  */
 interface EntityRepositoryFactory {
 
-    fun <T : Identifiable> create(cls: Class<T>): EntityRepository<T>
+    fun <T : Identifiable> create(entityClass: Class<T>): EntityRepository<T>
 }
 
 inline fun <reified T : Identifiable> EntityRepositoryFactory.create(): EntityRepository<T> = create(T::class.java)
+
+fun <T : Identifiable, R : EntityRepository<T>> EntityRepositoryFactory.create(entityClass: Class<T>, targetClass: Class<R>): R =
+    create(entityClass).lift(targetClass)
+
+fun <T : Identifiable, R : EntityRepository<T>> EntityRepository<T>.lift(targetClass: Class<R>): R =
+    delegate(targetClass, handlerFactory(this))
