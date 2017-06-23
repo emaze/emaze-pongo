@@ -3,7 +3,7 @@
 package net.emaze.pongo
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import net.emaze.pongo.annotation.handlerFactory
+import net.emaze.pongo.annotation.annotatedMethodHandlerFactory
 import net.emaze.pongo.proxy.delegate
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
@@ -110,8 +110,19 @@ interface EntityRepositoryFactory {
 
 inline fun <reified T : Identifiable> EntityRepositoryFactory.create(): EntityRepository<T> = create(T::class.java)
 
+/**
+ * Create a proxied repository implementing the given target class, delegating methods
+ * to the effective repository created by this factory for the specified entity class.
+ *
+ * The abstract methods of target class should be annotated with @Query.
+ */
 fun <T : Identifiable, R : EntityRepository<T>> EntityRepositoryFactory.create(entityClass: Class<T>, targetClass: Class<R>): R =
     create(entityClass).lift(targetClass)
 
+/**
+ * Lift the effective repository to the specified abstract target class.
+ *
+ * The abstract methods should be annotated with @Query.
+ */
 fun <T : Identifiable, R : EntityRepository<T>> EntityRepository<T>.lift(targetClass: Class<R>): R =
-    delegate(targetClass, handlerFactory(this))
+    delegate(targetClass, annotatedMethodHandlerFactory())

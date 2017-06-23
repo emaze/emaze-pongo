@@ -6,13 +6,13 @@ import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 
 typealias Handler = (Array<Any?>) -> Any?
-typealias HandlerFactory = (method: Method) -> Handler
+typealias HandlerFactory<T> = (receiver: T, method: Method) -> Handler
 
-fun <R : Any> Any.delegate(targetClass: Class<R>, handlerFactory: HandlerFactory): R {
-    val proxied = this
+fun <T : Any, R : T> T.delegate(targetClass: Class<R>, methodHandlers: HandlerFactory<T>): R {
+    val receiver = this
     val handlers = mutableMapOf<Method, Handler>()
     @Suppress("UNCHECKED_CAST")
-    val proxy = Proxy.newProxyInstance(javaClass.classLoader, arrayOf(targetClass), { _, method, args ->
+    val proxy = Proxy.newProxyInstance(this.javaClass.classLoader, arrayOf(targetClass), { _, method, args ->
         val handler = handlers[method] ?: throw UnsupportedOperationException("Unsupported method $method")
         handler(args ?: emptyArray())
     }) as R
@@ -20,7 +20,7 @@ fun <R : Any> Any.delegate(targetClass: Class<R>, handlerFactory: HandlerFactory
     baseMethods.associateByTo(
         handlers,
         { method -> method },
-        { method -> { args -> method.invoke(proxied, *args) } }
+        { method -> { args -> method.invoke(receiver, *args) } }
     )
     val userMethods = listOf(*targetClass.methods) - baseMethods
     userMethods.associateByTo(
@@ -28,7 +28,7 @@ fun <R : Any> Any.delegate(targetClass: Class<R>, handlerFactory: HandlerFactory
         { method -> method },
         { method ->
             if (method.isDefault) invokeDefaultMethod(method, targetClass, proxy)
-            else handlerFactory(method)
+            else methodHandlers(receiver, method)
         }
     )
     return proxy

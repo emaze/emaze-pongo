@@ -1,12 +1,9 @@
-@file:JvmName("AnnotatedRepository")
-
 package net.emaze.pongo.annotation
 
 import net.emaze.pongo.EntityRepository
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.proxy.Handler
 import net.emaze.pongo.proxy.HandlerFactory
-import java.lang.reflect.Method
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
@@ -18,7 +15,7 @@ annotation class Query(val value: String)
 @MustBeDocumented
 annotation class Nullable
 
-fun <T : Identifiable> handlerFactory(repository: EntityRepository<T>): HandlerFactory = { method: Method ->
+internal fun <T : Identifiable> annotatedMethodHandlerFactory(): HandlerFactory<EntityRepository<T>> = { repository, method ->
     fun findAllAsList(query: String): Handler = { args -> repository.findAll(query, *args) }
     fun findAllAsSet(query: String): Handler = { args -> LinkedHashSet(repository.findAll(query, *args)) }
     fun findFirstOptional(query: String): Handler = { args -> repository.findFirst(query, *args) }
