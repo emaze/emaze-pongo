@@ -2,8 +2,8 @@ package net.emaze.pongo.annotation
 
 import net.emaze.pongo.EntityRepository
 import net.emaze.pongo.Identifiable
-import net.emaze.pongo.proxy.Handler
-import net.emaze.pongo.proxy.HandlerFactory
+import net.emaze.pongo.proxy.MethodHandler
+import net.emaze.pongo.proxy.MethodHandlerFactory
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
@@ -15,12 +15,12 @@ annotation class Query(val value: String)
 @MustBeDocumented
 annotation class Nullable
 
-internal fun <T : Identifiable> annotatedMethodHandlerFactory(): HandlerFactory<EntityRepository<T>> = { repository, method ->
-    fun findAllAsList(query: String): Handler = { args -> repository.findAll(query, *args) }
-    fun findAllAsSet(query: String): Handler = { args -> LinkedHashSet(repository.findAll(query, *args)) }
-    fun findFirstOptional(query: String): Handler = { args -> repository.findFirst(query, *args) }
-    fun findFirstNullable(query: String): Handler = { args -> repository.findFirst(query, *args).orElse(null) }
-    fun findFirstNotNull(query: String): Handler = { args ->
+internal fun <T : Identifiable> annotatedMethodHandlerFactory(): MethodHandlerFactory<EntityRepository<T>> = { repository, method ->
+    fun findAllAsList(query: String): MethodHandler = { args -> repository.findAll(query, *args) }
+    fun findAllAsSet(query: String): MethodHandler = { args -> LinkedHashSet(repository.findAll(query, *args)) }
+    fun findFirstOptional(query: String): MethodHandler = { args -> repository.findFirst(query, *args) }
+    fun findFirstNullable(query: String): MethodHandler = { args -> repository.findFirst(query, *args).orElse(null) }
+    fun findFirstNotNull(query: String): MethodHandler = { args ->
         repository.findFirst(query, *args).orElseThrow { NoSuchElementException("The query $query has no result") }
     }
 
