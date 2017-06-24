@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import net.emaze.pongo.Identifiable;
 import net.emaze.pongo.Pongo;
 import net.emaze.pongo.postgres.Context;
-import net.emaze.pongo.postgres.PostgresJsonRepository;
+import net.emaze.pongo.postgres.PostgresEntityRepository;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class ITJavaUsage {
         }
     }
 
-    final PostgresJsonRepository<JavaEntity> repository = Context.INSTANCE.getFactory().create(JavaEntity.class);
+    final PostgresEntityRepository<JavaEntity> repository = Context.INSTANCE.getFactory().create(JavaEntity.class);
 
     {
         repository.createTable().deleteAll();

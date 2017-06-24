@@ -15,24 +15,24 @@ import java.lang.IllegalStateException
 import java.util.*
 import javax.sql.DataSource
 
-class PostgresJsonRepositoryFactory(
+class PostgresEntityRepositoryFactory(
     val dataSource: DataSource,
     val mapper: ObjectMapper
 ) : EntityRepositoryFactory {
 
-    override fun <T : Identifiable> create(entityClass: Class<T>) = PostgresJsonRepository(entityClass, dataSource, mapper)
+    override fun <T : Identifiable> create(entityClass: Class<T>) = PostgresEntityRepository(entityClass, dataSource, mapper)
 }
 
-inline fun <reified T : Identifiable> PostgresJsonRepositoryFactory.create(): PostgresJsonRepository<T> = create(T::class.java)
+inline fun <reified T : Identifiable> PostgresEntityRepositoryFactory.create(): PostgresEntityRepository<T> = create(T::class.java)
 
-open class PostgresJsonRepository<T : Identifiable>(
+open class PostgresEntityRepository<T : Identifiable>(
     override val entityClass: Class<T>,
     val dataSource: DataSource,
     val mapper: ObjectMapper
 ) : EntityRepository<T> {
 
     companion object {
-        private val logger = LoggerFactory.getLogger(PostgresJsonRepository::class.java)
+        private val logger = LoggerFactory.getLogger(PostgresEntityRepository::class.java)
     }
 
     val tableName: String by lazy {
@@ -41,7 +41,7 @@ open class PostgresJsonRepository<T : Identifiable>(
             .replace("[A-Z]".toRegex(), { match -> "_${match.value.toLowerCase()}" })
     }
 
-    fun createTable(): PostgresJsonRepository<T> = also {
+    fun createTable(): PostgresEntityRepository<T> = also {
         dataSource.execute("""
             CREATE TABLE IF NOT EXISTS $tableName (
               id      BIGSERIAL PRIMARY KEY,
@@ -51,7 +51,7 @@ open class PostgresJsonRepository<T : Identifiable>(
         """)
     }
 
-    fun createIndex(): PostgresJsonRepository<T> = also {
+    fun createIndex(): PostgresEntityRepository<T> = also {
         dataSource.execute("CREATE INDEX IF NOT EXISTS ${tableName}_data_idx ON $tableName USING GIN (data)")
     }
 

@@ -19,10 +19,10 @@ object Context {
         url = "jdbc:postgresql://localhost:$port/pongo"
     }
     val mapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
-    val factory = PostgresJsonRepositoryFactory(dataSource, mapper)
+    val factory = PostgresEntityRepositoryFactory(dataSource, mapper)
 }
 
-class ITPostgresJsonRepository {
+class ITPostgresEntityRepository {
 
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
