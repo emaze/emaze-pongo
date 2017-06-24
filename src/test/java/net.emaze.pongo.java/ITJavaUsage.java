@@ -2,34 +2,45 @@ package net.emaze.pongo.java;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.emaze.pongo.EntityRepository;
 import net.emaze.pongo.Identifiable;
 import net.emaze.pongo.Pongo;
+import net.emaze.pongo.annotation.Query;
 import net.emaze.pongo.postgres.Context;
 import net.emaze.pongo.postgres.PostgresEntityRepository;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
 public class ITJavaUsage {
 
-    static class JavaEntity extends Identifiable {
+    public static class JavaEntity extends Identifiable {
 
-        final int x;
-        final int y;
+        public final int x;
+        public final int y;
 
         @JsonCreator
-        JavaEntity(@JsonProperty("x") int x, @JsonProperty("y") int y) {
+        public JavaEntity(@JsonProperty("x") int x, @JsonProperty("y") int y) {
             this.x = x;
             this.y = y;
         }
     }
 
-    final PostgresEntityRepository<JavaEntity> repository = Context.INSTANCE.getFactory().create(JavaEntity.class);
-
-    {
-        repository.createTable().deleteAll();
+    public interface JavaEntityRepository extends EntityRepository<JavaEntity> {
+        @Query("where (data->>'x')::int < ?")
+        List<JavaEntity> searchAllLowerThan(int x);
     }
+
+    final PostgresEntityRepository<JavaEntity> postgresRepository = Context.INSTANCE.getFactory().create(JavaEntity.class);
+    final JavaEntityRepository repository = Pongo.lift(postgresRepository, JavaEntityRepository.class);
+
+    @Before
+    public void setUp() {
+        postgresRepository.createTable().deleteAll();
+    }
+
 
     @Test
     public void itCanInsertNewEntity() {
@@ -44,5 +55,12 @@ public class ITJavaUsage {
         final JavaEntity newEntity = repository.save(Pongo.attach(new JavaEntity(2, 3), entity));
         final List<JavaEntity> got = repository.findAll();
         Assert.assertEquals(1, got.size());
+    }
+
+    @Test
+    public void itCanInvokeProxiedMethods() {
+        repository.save(new JavaEntity(1, 2));
+        final List<JavaEntity> got = repository.searchAllLowerThan(10);
+        Assert.assertEquals(true, got.size() > 0);
     }
 }
