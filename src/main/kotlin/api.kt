@@ -4,7 +4,7 @@ package net.emaze.pongo
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.emaze.pongo.annotation.annotatedMethodHandlerFactory
-import net.emaze.pongo.proxy.delegate
+import net.emaze.pongo.proxy.delegateTo
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.util.*
@@ -125,4 +125,4 @@ fun <T : Identifiable, R : EntityRepository<T>> EntityRepositoryFactory.create(e
  * The abstract methods should be annotated with @Query.
  */
 fun <T : Identifiable, R : EntityRepository<T>> EntityRepository<T>.lift(targetClass: Class<R>): R =
-    delegate(targetClass, annotatedMethodHandlerFactory())
+    targetClass.delegateTo(this, annotatedMethodHandlerFactory())
