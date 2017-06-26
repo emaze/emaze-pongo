@@ -33,7 +33,7 @@ class ITPostgresEntityRepository {
     @Test
     fun itCanInsertNewEntity() {
         repository.save(SomeEntity(1, 2))
-        val got = repository.findAll()
+        val got = repository.searchAll()
         assertEquals(1, got.size)
         assertEquals(listOf(SomeEntity(1, 2)), got)
     }
@@ -41,7 +41,7 @@ class ITPostgresEntityRepository {
     @Test
     fun newEntityShouldHaveMetadata() {
         val entity = repository.save(SomeEntity(1, 2))
-        val (got) = repository.findAll()
+        val (got) = repository.searchAll()
         assertNotNull(got.metadata)
         assertEquals(entity.metadata, got.metadata)
     }
@@ -58,7 +58,7 @@ class ITPostgresEntityRepository {
         val entity = repository.save(SomeEntity(1, 2))
         entity.x = 3
         repository.save(entity)
-        val got = repository.findAll()
+        val got = repository.searchAll()
         assertEquals(1, got.size)
         assertEquals(listOf(SomeEntity(3, 2)), got)
     }
@@ -68,7 +68,7 @@ class ITPostgresEntityRepository {
     fun itCanDeleteAnExistingEntity() {
         val entity = repository.save(SomeEntity(1, 2))
         repository.delete(entity)
-        val got = repository.findAll()
+        val got = repository.searchAll()
         assertEquals(0, got.size)
     }
 
@@ -85,45 +85,45 @@ class ITPostgresEntityRepository {
     }
 
     @Test
-    fun itCanFindAllByCriteria() {
+    fun itCanSearchAllByCriteria() {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.findAll("where (data->>'x')::int < ?", 3)
+        val got = repository.searchAll("where (data->>'x')::int < ?", 3)
         assertEquals(listOf(SomeEntity(1, 2), SomeEntity(2, 5)), got)
     }
 
     @Test
-    fun itCanFindAllByExample() {
+    fun itCanSearchAllByExample() {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.findAllLike(mapOf("x" to 2))
+        val got = repository.searchAllLike(mapOf("x" to 2))
         assertEquals(listOf(SomeEntity(2, 5)), got)
     }
 
     @Test
-    fun itCanFindFirstByCriteria() {
+    fun itCanSearchFirstByCriteria() {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.findFirst("where (data->>'x')::int < ?", 3)
+        val got = repository.searchFirst("where (data->>'x')::int < ?", 3)
         assertEquals(Optional.of(SomeEntity(1, 2)), got)
     }
 
     @Test
-    fun itCanFindFirstByExample() {
+    fun itCanSearchFirstByExample() {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(1, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.findFirstLike(mapOf("x" to 1))
+        val got = repository.searchFirstLike(mapOf("x" to 1))
         assertEquals(Optional.of(SomeEntity(1, 2)), got)
     }
 
     @Test
-    fun itCanFindNothing() {
+    fun itCanSearchNothing() {
         repository.save(SomeEntity(1, 2))
-        val got = repository.findFirstLike(mapOf("x" to 10))
+        val got = repository.searchFirstLike(mapOf("x" to 10))
         assertEquals(Optional.empty<SomeEntity>(), got)
     }
 
@@ -132,7 +132,7 @@ class ITPostgresEntityRepository {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.mapFirstLike(mapOf("x" to 1)) { entity -> SomeEntity(entity.x, 0).attach(entity) }
-        val got = repository.findFirstLike(mapOf("x" to 1))
+        val got = repository.searchFirstLike(mapOf("x" to 1))
         assertEquals(Optional.of(SomeEntity(1, 0)), got)
     }
 }

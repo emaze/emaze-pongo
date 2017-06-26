@@ -72,32 +72,32 @@ interface EntityRepository<T : Identifiable> {
     /**
      * Get all the entities.
      */
-    fun findAll(): List<T> = findAll("")
+    fun searchAll(): List<T> = searchAll("")
 
     /**
      * Get all the entities satisfying the query.
      */
-    fun findAll(query: String, vararg params: Any?): List<T>
+    fun searchAll(query: String, vararg params: Any?): List<T>
 
     /**
      * Get all the entities with the properties equals to the example's ones.
      */
-    fun findAllLike(example: Any): List<T>
+    fun searchAllLike(example: Any): List<T>
 
     /**
      * Get the first entity.
      */
-    fun findFirst(): Optional<T> = findFirst("")
+    fun searchFirst(): Optional<T> = searchFirst("")
 
     /**
      * Get the first entity satisfying the query.
      */
-    fun findFirst(query: String, vararg params: Any?): Optional<T>
+    fun searchFirst(query: String, vararg params: Any?): Optional<T>
 
     /**
      * Get the first entity with the properties equals to the example's ones.
      */
-    fun findFirstLike(example: Any): Optional<T>
+    fun searchFirstLike(example: Any): Optional<T>
 }
 
 /**

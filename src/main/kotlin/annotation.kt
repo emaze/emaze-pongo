@@ -16,12 +16,12 @@ annotation class Query(val value: String)
 annotation class Nullable
 
 internal fun <T : Identifiable> annotatedMethodHandlerFactory(): MethodHandlerFactory<EntityRepository<T>> = { repository, method ->
-    fun findAllAsList(query: String): MethodHandler = { args -> repository.findAll(query, *args) }
-    fun findAllAsSet(query: String): MethodHandler = { args -> LinkedHashSet(repository.findAll(query, *args)) }
-    fun findFirstOptional(query: String): MethodHandler = { args -> repository.findFirst(query, *args) }
-    fun findFirstNullable(query: String): MethodHandler = { args -> repository.findFirst(query, *args).orElse(null) }
+    fun findAllAsList(query: String): MethodHandler = { args -> repository.searchAll(query, *args) }
+    fun findAllAsSet(query: String): MethodHandler = { args -> LinkedHashSet(repository.searchAll(query, *args)) }
+    fun findFirstOptional(query: String): MethodHandler = { args -> repository.searchFirst(query, *args) }
+    fun findFirstNullable(query: String): MethodHandler = { args -> repository.searchFirst(query, *args).orElse(null) }
     fun findFirstNotNull(query: String): MethodHandler = { args ->
-        repository.findFirst(query, *args).orElseThrow { NoSuchElementException("The query $query has no result") }
+        repository.searchFirst(query, *args).orElseThrow { NoSuchElementException("The query $query has no result") }
     }
 
     val query = method.getAnnotation(Query::class.java)?.value ?: throw UnsupportedOperationException("The method ${method.name} has no @Query annotation")

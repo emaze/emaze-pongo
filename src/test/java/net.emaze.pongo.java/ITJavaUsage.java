@@ -45,7 +45,7 @@ public class ITJavaUsage {
     @Test
     public void itCanInsertNewEntity() {
         repository.save(new JavaEntity(1, 2));
-        final List<JavaEntity> got = repository.findAll();
+        final List<JavaEntity> got = repository.searchAll();
         Assert.assertEquals(1, got.size());
     }
 
@@ -53,7 +53,7 @@ public class ITJavaUsage {
     public void itCanUpdateAnExistentEntity() {
         final JavaEntity entity = repository.save(new JavaEntity(1, 2));
         final JavaEntity newEntity = repository.save(Pongo.attach(new JavaEntity(2, 3), entity));
-        final List<JavaEntity> got = repository.findAll();
+        final List<JavaEntity> got = repository.searchAll();
         Assert.assertEquals(1, got.size());
     }
 

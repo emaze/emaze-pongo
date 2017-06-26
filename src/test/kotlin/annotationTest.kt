@@ -43,11 +43,11 @@ class AnnotationBasedRepositoryTest {
         }
         val proxy = repository.lift(Entities::class.java)
         proxy.save(Entity(1))
-        proxy.findAll()
-        proxy.findAll("query", 1, 2)
+        proxy.searchAll()
+        proxy.searchAll("query", 1, 2)
         verify(repository).save(Entity(1))
-        verify(repository).findAll()
-        verify(repository).findAll("query", 1, 2)
+        verify(repository).searchAll()
+        verify(repository).searchAll("query", 1, 2)
     }
 
     @Test(expected = UnsupportedOperationException::class)
@@ -62,7 +62,7 @@ class AnnotationBasedRepositoryTest {
         val expected = listOf(Entity(1))
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
-            on { findAll("methodReturningListQuery", 3) } doReturn expected
+            on { searchAll("methodReturningListQuery", 3) } doReturn expected
         }
         val proxy = repository.lift(Entities::class.java)
         assertEquals(expected, proxy.methodReturningList(3))
@@ -73,7 +73,7 @@ class AnnotationBasedRepositoryTest {
         val expected = listOf(Entity(1), Entity(1))
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
-            on { findAll("methodReturningSetQuery", 3) } doReturn expected
+            on { searchAll("methodReturningSetQuery", 3) } doReturn expected
         }
         val proxy = repository.lift(Entities::class.java)
         assertEquals(setOf(Entity(1)), proxy.methodReturningSet(3))
@@ -84,7 +84,7 @@ class AnnotationBasedRepositoryTest {
         val expected = Entity(1)
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
-            on { findFirst("methodReturningNotNullEntityQuery", "found") } doReturn Optional.of(expected)
+            on { searchFirst("methodReturningNotNullEntityQuery", "found") } doReturn Optional.of(expected)
         }
         val proxy = repository.lift(Entities::class.java)
         assertEquals(expected, proxy.methodReturningNotNullEntity("found"))
@@ -94,7 +94,7 @@ class AnnotationBasedRepositoryTest {
     fun annotatedMethodsReturningNotNullEntityFailsWhenEntityIsNotFound() {
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
-            on { findFirst("methodReturningNotNullEntityQuery", "notFound") } doReturn Optional.empty()
+            on { searchFirst("methodReturningNotNullEntityQuery", "notFound") } doReturn Optional.empty()
         }
         val proxy = repository.lift(Entities::class.java)
         proxy.methodReturningNotNullEntity("notFound")
@@ -104,7 +104,7 @@ class AnnotationBasedRepositoryTest {
     fun annotatedMethodsReturningNullableEntityReturnsNullWhenEntityIsNotFound() {
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
-            on { findFirst("methodReturningNullableEntityQuery", "notFound") } doReturn Optional.empty()
+            on { searchFirst("methodReturningNullableEntityQuery", "notFound") } doReturn Optional.empty()
         }
         val proxy = repository.lift(Entities::class.java)
         assertEquals(null, proxy.methodReturningNullableEntity("notFound"))
@@ -114,7 +114,7 @@ class AnnotationBasedRepositoryTest {
     fun annotatedMethodsReturningOptionalEntityReturnsEmptyWhenEntityIsNotFound() {
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
-            on { findFirst("methodReturningOptionalEntityQuery", "notFound") } doReturn Optional.empty()
+            on { searchFirst("methodReturningOptionalEntityQuery", "notFound") } doReturn Optional.empty()
         }
         val proxy = repository.lift(Entities::class.java)
         assertEquals(Optional.empty<Entity>(), proxy.methodReturningOptionalEntity("notFound"))
@@ -124,7 +124,7 @@ class AnnotationBasedRepositoryTest {
     fun annotatedMethodsReturningOptionalEntityReturnsEntityWhenItIsFound() {
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
-            on { findFirst("methodReturningOptionalEntityQuery", "found") } doReturn Optional.of(Entity(1))
+            on { searchFirst("methodReturningOptionalEntityQuery", "found") } doReturn Optional.of(Entity(1))
         }
         val proxy = repository.lift(Entities::class.java)
         assertEquals(Optional.of(Entity(1)), proxy.methodReturningOptionalEntity("found"))
