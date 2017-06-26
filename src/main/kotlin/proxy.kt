@@ -3,6 +3,7 @@ package net.emaze.pongo.proxy
 import java.lang.invoke.MethodHandles
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import java.util.*
 
 typealias MethodHandler = (Array<Any?>) -> Any?
 typealias MethodHandlerFactory<T> = (receiver: T, method: Method) -> MethodHandler
@@ -33,6 +34,9 @@ fun <T : Any, R : T> Class<R>.delegateTo(receiver: T, receiverClass: Class<T>, m
             else methodHandlers(receiver, method)
         }
     )
+    handlers[Object::class.java.getMethod("equals", Any::class.java)] = { args -> args[0] === proxy }
+    handlers[Object::class.java.getMethod("hashCode")] = { Objects.hash(receiver, targetClass) }
+    handlers[Object::class.java.getMethod("toString")] = { "Proxy of ${targetClass.simpleName} delegating to $receiver" }
     return proxy
 }
 

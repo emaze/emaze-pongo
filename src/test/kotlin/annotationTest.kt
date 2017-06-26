@@ -129,4 +129,32 @@ class AnnotationBasedRepositoryTest {
         val proxy = repository.lift(Entities::class.java)
         assertEquals(Optional.of(Entity(1)), proxy.methodReturningOptionalEntity("found"))
     }
+
+    @Test
+    fun itImplementsEqualsByReference() {
+        val repository = mock<EntityRepository<Entity>> {
+            on { entityClass } doReturn Entity::class.java
+        }
+        val proxy = repository.lift(Entities::class.java)
+        assertEquals(true, proxy.equals(proxy))
+        assertEquals(false, proxy.equals("string"))
+    }
+
+    @Test
+    fun itImplementsHashCode() {
+        val repository = mock<EntityRepository<Entity>> {
+            on { entityClass } doReturn Entity::class.java
+        }
+        val proxy = repository.lift(Entities::class.java)
+        proxy.hashCode()
+    }
+
+    @Test
+    fun itImplementsToString() {
+        val repository = mock<EntityRepository<Entity>> {
+            on { entityClass } doReturn Entity::class.java
+        }
+        val proxy = repository.lift(Entities::class.java)
+        assertEquals("Proxy of Entities delegating to $repository", proxy.toString())
+    }
 }
