@@ -8,6 +8,7 @@ import net.emaze.pongo.proxy.delegateTo
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.util.*
+import kotlin.NoSuchElementException
 
 /**
  * Identifiable is the base class of an entity.
@@ -85,12 +86,12 @@ interface EntityRepository<T : Identifiable> {
     fun searchAllLike(example: Any): List<T>
 
     /**
-     * Get the first entity.
+     * Get the first entity or empty if it is not found.
      */
     fun searchFirst(): Optional<T> = searchFirst("")
 
     /**
-     * Get the first entity satisfying the query.
+     * Get the first entity satisfying the query or empty.
      */
     fun searchFirst(query: String, vararg params: Any?): Optional<T>
 
@@ -98,6 +99,27 @@ interface EntityRepository<T : Identifiable> {
      * Get the first entity with the properties equals to the example's ones.
      */
     fun searchFirstLike(example: Any): Optional<T>
+
+    /**
+     * Get the first entity.
+     */
+    fun findFirst(): T = findFirst("")
+
+    /**
+     * Get the first entity satisfying the query.
+     */
+    fun findFirst(query: String, vararg params: Any?): T =
+        searchFirst(query, *params).orElseThrow {
+            NoSuchElementException("Query on $entityClass have returned no results")
+        }
+
+    /**
+     * Get the first entity with the properties equals to the example's ones.
+     */
+    fun findFirstLike(example: Any): T =
+        searchFirstLike(example).orElseThrow {
+            NoSuchElementException("Query on $entityClass have returned no results")
+        }
 }
 
 interface RelationalEntityRepository<T : Identifiable> : EntityRepository<T> {
