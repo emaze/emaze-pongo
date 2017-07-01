@@ -100,6 +100,21 @@ interface EntityRepository<T : Identifiable> {
     fun searchFirstLike(example: Any): Optional<T>
 }
 
+interface RelationalEntityRepository<T : Identifiable> : EntityRepository<T> {
+
+    val tableName: String
+
+    /**
+     * Create the table if it doesn't exist.
+     */
+    fun createTable(): RelationalEntityRepository<T>
+
+    /**
+     * Create the index if it doesn't exist.
+     */
+    fun createIndex(): RelationalEntityRepository<T>
+}
+
 /**
  * The factory of entity repositories.
  */

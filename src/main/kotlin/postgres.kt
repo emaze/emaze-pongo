@@ -1,10 +1,10 @@
 package net.emaze.pongo.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import net.emaze.pongo.EntityRepository
 import net.emaze.pongo.EntityRepositoryFactory
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.OptimisticLockException
+import net.emaze.pongo.RelationalEntityRepository
 import net.emaze.pongo.jdbc.execute
 import net.emaze.pongo.jdbc.query
 import net.emaze.pongo.jdbc.update
@@ -25,23 +25,26 @@ class PostgresEntityRepositoryFactory(
 
 inline fun <reified T : Identifiable> PostgresEntityRepositoryFactory.create(): PostgresEntityRepository<T> = create(T::class.java)
 
+abstract class BaseRelationalEntityRepository<T : Identifiable>(
+    override final val entityClass: Class<T>
+) : RelationalEntityRepository<T> {
+
+    override val tableName: String = entityClass.simpleName
+        .decapitalize()
+        .replace("[A-Z]".toRegex(), { match -> "_${match.value.toLowerCase()}" })
+}
+
 open class PostgresEntityRepository<T : Identifiable>(
-    override val entityClass: Class<T>,
+    entityClass: Class<T>,
     val dataSource: DataSource,
     val mapper: ObjectMapper
-) : EntityRepository<T> {
+) : BaseRelationalEntityRepository<T>(entityClass) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(PostgresEntityRepository::class.java)
     }
 
-    val tableName: String by lazy {
-        entityClass.simpleName!!
-            .decapitalize()
-            .replace("[A-Z]".toRegex(), { match -> "_${match.value.toLowerCase()}" })
-    }
-
-    fun createTable(): PostgresEntityRepository<T> = also {
+    override fun createTable(): PostgresEntityRepository<T> = also {
         dataSource.execute("""
             CREATE TABLE IF NOT EXISTS $tableName (
               id      BIGSERIAL PRIMARY KEY,
@@ -51,7 +54,7 @@ open class PostgresEntityRepository<T : Identifiable>(
         """)
     }
 
-    fun createIndex(): PostgresEntityRepository<T> = also {
+    override fun createIndex(): PostgresEntityRepository<T> = also {
         dataSource.execute("CREATE INDEX IF NOT EXISTS ${tableName}_data_idx ON $tableName USING GIN (data)")
     }
 
