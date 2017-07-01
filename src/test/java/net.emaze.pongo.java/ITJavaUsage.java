@@ -42,7 +42,6 @@ public class ITJavaUsage {
         postgresRepository.createTable().deleteAll();
     }
 
-
     @Test
     public void itCanInsertNewEntity() {
         repository.save(new JavaEntity(1, 2));
@@ -63,6 +62,13 @@ public class ITJavaUsage {
         repository.save(new JavaEntity(1, 2));
         final List<JavaEntity> got = repository.searchAllLowerThan(10);
         Assert.assertEquals(true, got.size() > 0);
+    }
+
+    @Test
+    public void itCanSearchAllEntities() {
+        repository.save(new JavaEntity(1, 2));
+        final List<JavaEntity> got = repository.searchAll();
+        Assert.assertEquals(1, got.size());
     }
 
     @Test
