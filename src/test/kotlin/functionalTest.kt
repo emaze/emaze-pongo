@@ -21,4 +21,12 @@ class FunctionalTest {
         val got = updater(Entity(0).attach(Identifiable.Metadata(identity = 1, version = 3)))
         assertEquals(Entity(2), got)
     }
+
+    @Test
+    fun unitConvertThisFunctionToUnitFunction() {
+        var box: Int = 0
+        val got: (Int) -> Unit = { n: Int -> box = n }.unit()
+        got(3)
+        assertEquals(3, box)
+    }
 }

@@ -15,4 +15,7 @@ import net.emaze.pongo.attach
 fun <T : Identifiable> EntityRepository<T>.update(f: (T) -> T): (T) -> T =
     { entity -> save(f(entity).attach(entity)) }
 
-fun <T, U> ((T) -> U).unit(): (T) -> Unit = { this(it) }
+/**
+ * Cast this function to a function returning nothing (Unit).
+ */
+fun <T, U> ((T) -> U).unit(): (T) -> Unit = this as (T) -> Unit
