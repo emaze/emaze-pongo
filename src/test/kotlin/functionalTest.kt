@@ -13,7 +13,7 @@ class FunctionalTest {
     data class Entity(val x: Int) : Identifiable()
 
     @Test
-    fun itShouldSaveAndReturnMappedEntity() {
+    fun updateFunctionSaveAndReturnMappedEntity() {
         val repository = mock<EntityRepository<Entity>> {
             on { save(Entity(1)) } doReturn Entity(2)
         }
