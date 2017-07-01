@@ -7,18 +7,25 @@ import net.emaze.pongo.Identifiable
 import net.emaze.pongo.attach
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.util.*
 
 class FunctionalTest {
 
-    data class Entity(val x: Int) : Identifiable()
+    class Entity(val x: Int) : Identifiable() {
+        override fun equals(other: Any?) =
+            other is Entity && this.x == other.x && this.metadata == other.metadata
+
+        override fun hashCode() = Objects.hash(x, metadata)
+    }
 
     @Test
     fun updateFunctionSaveAndReturnMappedEntity() {
+        val metadata = Identifiable.Metadata(identity = 1, version = 3)
         val repository = mock<EntityRepository<Entity>> {
-            on { save(Entity(1)) } doReturn Entity(2)
+            on { save(Entity(1).attach(metadata)) } doReturn Entity(2)
         }
         val updater = repository.update { Entity(it.x + 1) }
-        val got = updater(Entity(0).attach(Identifiable.Metadata(identity = 1, version = 3)))
+        val got = updater(Entity(0).attach(metadata))
         assertEquals(Entity(2), got)
     }
 
