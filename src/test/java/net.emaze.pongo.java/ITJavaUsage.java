@@ -6,6 +6,7 @@ import net.emaze.pongo.EntityRepository;
 import net.emaze.pongo.Identifiable;
 import net.emaze.pongo.Pongo;
 import net.emaze.pongo.annotation.Query;
+import net.emaze.pongo.functional.Pongoλ;
 import net.emaze.pongo.postgres.Context;
 import net.emaze.pongo.postgres.PostgresEntityRepository;
 import org.junit.Assert;
@@ -62,5 +63,14 @@ public class ITJavaUsage {
         repository.save(new JavaEntity(1, 2));
         final List<JavaEntity> got = repository.searchAllLowerThan(10);
         Assert.assertEquals(true, got.size() > 0);
+    }
+
+    @Test
+    public void itCanMapEntities() {
+        repository.save(new JavaEntity(1, 2));
+        repository.searchFirst().ifPresent(Pongoλ.update(repository, it -> new JavaEntity(it.x + 1, it.y * 2))::invoke);
+        final JavaEntity got = repository.searchFirst().get();
+        Assert.assertEquals(2, got.x);
+        Assert.assertEquals(4, got.y);
     }
 }

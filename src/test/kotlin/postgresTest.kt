@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.OptimisticLockException
 import net.emaze.pongo.attach
-import net.emaze.pongo.mapFirstLike
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -125,14 +124,5 @@ class ITPostgresEntityRepository {
         repository.save(SomeEntity(1, 2))
         val got = repository.searchFirstLike(mapOf("x" to 10))
         assertEquals(Optional.empty<SomeEntity>(), got)
-    }
-
-    @Test
-    fun itCanMapFirstByExample() {
-        repository.save(SomeEntity(1, 2))
-        repository.save(SomeEntity(2, 5))
-        repository.mapFirstLike(mapOf("x" to 1)) { entity -> SomeEntity(entity.x, 0).attach(entity) }
-        val got = repository.searchFirstLike(mapOf("x" to 1))
-        assertEquals(Optional.of(SomeEntity(1, 0)), got)
     }
 }
