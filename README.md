@@ -25,11 +25,10 @@ Emaze Pongo is written in Kotlin, but it is thought to be Java-friendly.
 
 ## Usage
 
-Check the [API](https://github.com/emaze/emaze-pongo/blob/master/src/main/kotlin/api.kt).
-
 ### Defining entities
 
-An entity is simply an object serializable with Jackson derived from `Identifiable`, 
+An entity is simply an object serializable with Jackson derived from 
+[Identifiable](https://github.com/emaze/emaze-pongo/blob/master/src/main/kotlin/Identifiable.kt), 
 that maintains its surrogate id and its version.
 
 ```java
@@ -47,7 +46,7 @@ public class User extends Identifiable {
 
 ### Defining repositories
 
-A repository is defined by an interface extending `EntityRepository` bound with the managed entity type. 
+A repository is defined by an interface extending [EntityRepository](https://github.com/emaze/emaze-pongo/blob/master/src/main/kotlin/EntityRepository.kt) bound with the managed entity type. 
 
 ```java
 public interface UserRepository extends EntityRepository<User> {
@@ -143,6 +142,7 @@ mvn package
 
 ## Further developments
 
+* Provide methods to read a list of results lazily via iteration
 * Provide a simpler way to query the aggregates using an SQL query translated to a JSON-based query
 * Integrate it with the Spring transaction manager in order to support the automatic updates of the changed entities
 * Introduce an optional entities cache at transaction level
