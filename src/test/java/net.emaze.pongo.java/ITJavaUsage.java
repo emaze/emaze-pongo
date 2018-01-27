@@ -8,7 +8,7 @@ import net.emaze.pongo.Pongo;
 import net.emaze.pongo.annotation.Query;
 import net.emaze.pongo.Pongoλ;
 import net.emaze.pongo.postgres.PostgresqlContext;
-import net.emaze.pongo.postgres.PostgresEntityRepository;
+import net.emaze.pongo.postgres.PostgreSQLEntityRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class ITJavaUsage {
         List<JavaEntity> searchAllLowerThan(int x);
     }
 
-    final PostgresEntityRepository<JavaEntity> postgresRepository = PostgresqlContext.INSTANCE.getFactory().create(JavaEntity.class);
+    final PostgreSQLEntityRepository<JavaEntity> postgresRepository = PostgresqlContext.INSTANCE.getFactory().create(JavaEntity.class);
     final JavaEntityRepository repository = Pongo.lift(postgresRepository, JavaEntityRepository.class);
 
     @Before

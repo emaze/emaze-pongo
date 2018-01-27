@@ -60,14 +60,13 @@ It can be instanced using an `EntityRepositoryFactory` in the following way:
 ```java
 final DataSource dataSource = ...;
 final ObjectMapper mapper = ...;
-final EntityRepositoryFactory factory = new PostgresEntityRepositoryFactory(dataSource, mapper);
+final EntityRepositoryFactory factory = new PostgreSQLEntityRepositoryFactory(dataSource, mapper);
 final UserRepository users = Pongo.create(factory, User.class, UserRepository.class);
 ```
 
-The effective `PostgresEntityRepository` has methods useful to create tables and indexes, that can be used as the following:
+The effective `PostgreSQLEntityRepository` has methods useful to create the related table:
 ```java
-final PostgresEntityRepositoryFactory factory = new PostgresEntityRepositoryFactory(dataSource, mapper);
-final EntityRepository<Users> repository = factory.create(User.class).createTable().createIndex();
+final EntityRepository<User> repository = factory.create(User.class).createTable();
 final UserRepository users = Pongo.lift(repository, UserRepository.class);
 ```
 

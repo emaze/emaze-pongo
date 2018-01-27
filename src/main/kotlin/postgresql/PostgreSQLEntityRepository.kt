@@ -12,17 +12,17 @@ import java.lang.IllegalStateException
 import java.util.*
 import javax.sql.DataSource
 
-open class PostgresEntityRepository<T : Identifiable>(
+open class PostgreSQLEntityRepository<T : Identifiable>(
     entityClass: Class<T>,
     val dataSource: DataSource,
     val mapper: ObjectMapper
 ) : BaseRelationalEntityRepository<T>(entityClass) {
 
     companion object {
-        private val logger = LoggerFactory.getLogger(PostgresEntityRepository::class.java)
+        private val logger = LoggerFactory.getLogger(PostgreSQLEntityRepository::class.java)
     }
 
-    override fun createTable(): PostgresEntityRepository<T> = also {
+    override fun createTable(): PostgreSQLEntityRepository<T> = also {
         dataSource.execute("""
             CREATE TABLE IF NOT EXISTS $tableName (
               id      BIGSERIAL PRIMARY KEY,

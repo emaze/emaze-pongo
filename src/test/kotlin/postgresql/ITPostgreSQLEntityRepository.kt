@@ -21,7 +21,7 @@ object PostgresqlContext {
     val factory = PostgresEntityRepositoryFactory(dataSource, mapper)
 }
 
-class ITPostgresEntityRepository {
+class ITPostgreSQLEntityRepository {
 
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
