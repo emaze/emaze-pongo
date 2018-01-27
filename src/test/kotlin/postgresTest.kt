@@ -26,7 +26,7 @@ class ITPostgresEntityRepository {
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
     val repository = Context.factory.create(SomeEntity::class.java).apply {
-        createTable().createIndex().deleteAll()
+        createTable().deleteAll()
     }
 
     @Test

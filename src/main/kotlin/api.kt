@@ -130,11 +130,6 @@ interface RelationalEntityRepository<T : Identifiable> : EntityRepository<T> {
      * Create the table if it doesn't exist.
      */
     fun createTable(): RelationalEntityRepository<T>
-
-    /**
-     * Create the index if it doesn't exist.
-     */
-    fun createIndex(): RelationalEntityRepository<T>
 }
 
 /**

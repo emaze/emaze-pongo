@@ -54,10 +54,6 @@ open class PostgresEntityRepository<T : Identifiable>(
         """)
     }
 
-    override fun createIndex(): PostgresEntityRepository<T> = also {
-        dataSource.execute("CREATE INDEX IF NOT EXISTS ${tableName}_data_idx ON $tableName USING GIN (data)")
-    }
-
     override fun save(entity: T): T =
         entity.metadata?.let { update(entity) } ?: insert(entity)
 
