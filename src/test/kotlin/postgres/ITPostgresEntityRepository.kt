@@ -11,7 +11,7 @@ import org.junit.Test
 import org.postgresql.ds.PGSimpleDataSource
 import java.util.*
 
-object Context {
+object PostgresqlContext {
     val port = System.getenv("PONGO_POSTGRES_PORT")?.toInt() ?: 5432
     val dataSource = PGSimpleDataSource().apply {
         user = "postgres"
@@ -25,7 +25,7 @@ class ITPostgresEntityRepository {
 
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
-    val repository = Context.factory.create(SomeEntity::class.java).apply {
+    val repository = PostgresqlContext.factory.create(SomeEntity::class.java).apply {
         createTable().deleteAll()
     }
 

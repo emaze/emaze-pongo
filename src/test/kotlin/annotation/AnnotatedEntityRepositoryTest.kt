@@ -10,7 +10,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.*
 
-class AnnotationBasedRepositoryTest {
+class AnnotatedEntityRepositoryTest {
 
     data class Entity(val x: Int) : Identifiable()
 
@@ -37,7 +37,7 @@ class AnnotationBasedRepositoryTest {
     }
 
     @Test
-    fun itShouldliftRepositoryMethodsToRepository() {
+    fun itShouldLiftRepositoryMethodsToRepository() {
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
         }
@@ -58,7 +58,7 @@ class AnnotationBasedRepositoryTest {
     }
 
     @Test
-    fun itShouldliftAnnotatedMethodsReturningListToFindAll() {
+    fun itShouldLiftAnnotatedMethodsReturningListToFindAll() {
         val expected = listOf(Entity(1))
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
@@ -69,7 +69,7 @@ class AnnotationBasedRepositoryTest {
     }
 
     @Test
-    fun itShouldliftAnnotatedMethodsReturningSetToFindAll() {
+    fun itShouldLiftAnnotatedMethodsReturningSetToFindAll() {
         val expected = listOf(Entity(1), Entity(1))
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java
@@ -80,7 +80,7 @@ class AnnotationBasedRepositoryTest {
     }
 
     @Test
-    fun itShouldliftAnnotatedMethodsReturningEntityToFindFirst() {
+    fun itShouldLiftAnnotatedMethodsReturningEntityToFindFirst() {
         val expected = Entity(1)
         val repository = mock<EntityRepository<Entity>> {
             on { entityClass } doReturn Entity::class.java

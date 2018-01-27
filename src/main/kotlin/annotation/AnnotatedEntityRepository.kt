@@ -7,14 +7,6 @@ import net.emaze.pongo.proxy.MethodHandlerFactory
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
-@Target(AnnotationTarget.FUNCTION)
-@MustBeDocumented
-annotation class Query(val value: String)
-
-@Target(AnnotationTarget.FUNCTION)
-@MustBeDocumented
-annotation class Nullable
-
 internal fun <T : Identifiable> annotatedMethodHandlerFactory(): MethodHandlerFactory<EntityRepository<T>> = { repository, method ->
     fun findAllAsList(query: String): MethodHandler = { args -> repository.searchAll(query, *args) }
     fun findAllAsSet(query: String): MethodHandler = { args -> LinkedHashSet(repository.searchAll(query, *args)) }

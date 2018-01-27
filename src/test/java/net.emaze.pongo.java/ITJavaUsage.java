@@ -5,18 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import net.emaze.pongo.EntityRepository;
 import net.emaze.pongo.Identifiable;
 import net.emaze.pongo.Pongo;
-import net.emaze.pongo.RelationalEntityRepository;
 import net.emaze.pongo.annotation.Query;
-import net.emaze.pongo.functional.Pongoλ;
-import net.emaze.pongo.postgres.Context;
+import net.emaze.pongo.Pongoλ;
+import net.emaze.pongo.postgres.PostgresqlContext;
 import net.emaze.pongo.postgres.PostgresEntityRepository;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ITJavaUsage {
 
@@ -37,7 +34,7 @@ public class ITJavaUsage {
         List<JavaEntity> searchAllLowerThan(int x);
     }
 
-    final PostgresEntityRepository<JavaEntity> postgresRepository = Context.INSTANCE.getFactory().create(JavaEntity.class);
+    final PostgresEntityRepository<JavaEntity> postgresRepository = PostgresqlContext.INSTANCE.getFactory().create(JavaEntity.class);
     final JavaEntityRepository repository = Pongo.lift(postgresRepository, JavaEntityRepository.class);
 
     @Before

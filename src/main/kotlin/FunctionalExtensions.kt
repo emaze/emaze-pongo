@@ -1,10 +1,6 @@
 @file:JvmName("Pongoλ")
 
-package net.emaze.pongo.functional
-
-import net.emaze.pongo.EntityRepository
-import net.emaze.pongo.Identifiable
-import net.emaze.pongo.attach
+package net.emaze.pongo
 
 /**
  * Decorate the given function in order to save the resulting entity using the metadata of the original one.

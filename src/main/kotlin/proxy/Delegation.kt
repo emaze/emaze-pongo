@@ -5,9 +5,6 @@ import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.util.*
 
-typealias MethodHandler = (Array<Any?>) -> Any?
-typealias MethodHandlerFactory<T> = (receiver: T, method: Method) -> MethodHandler
-
 inline fun <reified T : Any, R : T> Class<R>.delegateTo(receiver: T, noinline methodHandlers: MethodHandlerFactory<T>): R =
     delegateTo(receiver, T::class.java, methodHandlers)
 

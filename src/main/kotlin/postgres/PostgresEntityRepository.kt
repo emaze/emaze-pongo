@@ -1,10 +1,7 @@
 package net.emaze.pongo.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import net.emaze.pongo.EntityRepositoryFactory
-import net.emaze.pongo.Identifiable
-import net.emaze.pongo.OptimisticLockException
-import net.emaze.pongo.RelationalEntityRepository
+import net.emaze.pongo.*
 import net.emaze.pongo.jdbc.execute
 import net.emaze.pongo.jdbc.query
 import net.emaze.pongo.jdbc.update
@@ -14,25 +11,6 @@ import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.util.*
 import javax.sql.DataSource
-
-class PostgresEntityRepositoryFactory(
-    val dataSource: DataSource,
-    val mapper: ObjectMapper
-) : EntityRepositoryFactory {
-
-    override fun <T : Identifiable> create(entityClass: Class<T>) = PostgresEntityRepository(entityClass, dataSource, mapper)
-}
-
-inline fun <reified T : Identifiable> PostgresEntityRepositoryFactory.create(): PostgresEntityRepository<T> = create(T::class.java)
-
-abstract class BaseRelationalEntityRepository<T : Identifiable>(
-    override final val entityClass: Class<T>
-) : RelationalEntityRepository<T> {
-
-    override val tableName: String = entityClass.simpleName
-        .decapitalize()
-        .replace("[A-Z]".toRegex(), { match -> "_${match.value.toLowerCase()}" })
-}
 
 open class PostgresEntityRepository<T : Identifiable>(
     entityClass: Class<T>,
@@ -73,7 +51,8 @@ open class PostgresEntityRepository<T : Identifiable>(
 
     override fun delete(entity: T) {
         logger.debug("Deleting entity {} with {} from {}", entity, entity.metadata, tableName)
-        val identity = entity.metadata?.identity ?: throw IllegalArgumentException("Cannot delete the transient object $entity")
+        val identity = entity.metadata?.identity
+            ?: throw IllegalArgumentException("Cannot delete the transient object $entity")
         val deleted = dataSource.update("delete from $tableName where id = ?", identity)
         if (deleted == 0) throw IllegalStateException("Cannot delete not existing entity $entity of ID ${entity.metadata}")
     }

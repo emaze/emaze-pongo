@@ -2,14 +2,12 @@ package net.emaze.pongo.functional
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import net.emaze.pongo.EntityRepository
-import net.emaze.pongo.Identifiable
-import net.emaze.pongo.attach
+import net.emaze.pongo.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.*
 
-class FunctionalTest {
+class FunctionalExtensionsTest {
 
     class Entity(val x: Int) : Identifiable() {
         override fun equals(other: Any?) =
