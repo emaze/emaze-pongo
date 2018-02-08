@@ -4,6 +4,7 @@ package net.emaze.pongo.jdbc
 
 import java.sql.PreparedStatement
 import java.sql.ResultSet
+import java.sql.Timestamp
 import java.sql.Types
 import java.util.*
 import javax.sql.DataSource
@@ -42,7 +43,7 @@ private fun PreparedStatement.setParam(index: Int, value: Any?) =
         is Int -> setInt(index, value)
         is Long -> setLong(index, value)
         is Boolean -> setBoolean(index, value)
-        is Date -> setDate(index, java.sql.Date(value.time))
+        is Date -> setTimestamp(index, Timestamp(value.time))
         is Double -> setDouble(index, value)
         is Float -> setFloat(index, value)
         else -> setObject(index, value)
