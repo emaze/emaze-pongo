@@ -15,7 +15,7 @@ object PostgresqlContext {
     val port = System.getenv("PONGO_POSTGRES_PORT")?.toInt() ?: 5432
     val dataSource = PGSimpleDataSource().apply {
         user = "postgres"
-        url = "jdbc:postgresql://localhost:$port/pongo"
+        setURL("jdbc:postgresql://localhost:$port/pongo")
     }
     val mapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
     val factory = PostgresEntityRepositoryFactory(dataSource, mapper)
