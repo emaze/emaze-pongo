@@ -133,6 +133,31 @@ final User newUser = oldUser.doSomething();
 users.save(newUser);
 ```
 
+### Integration with Spring Framework
+
+In order to synchronize the operations with the Spring transaction manager you can use the `TransactionAwareDataSourceProxy` decorator, i.e.:
+```java
+@Configuration
+public class PongoConfig {
+    @Bean
+    public EntityRepositoryFactory entityRepositoryFactory(DataSource dataSource, ObjectMapper mapper) {
+        return new PostgresEntityRepositoryFactory(new TransactionAwareDataSourceProxy(dataSource), mapper);
+    }
+}
+```
+
+### PostgreSQL scripts
+
+Is it possible to create the PostgreSQL tables manually as follows:
+```sql
+CREATE TABLE user (
+  id      BIGSERIAL PRIMARY KEY,
+  version BIGINT NOT NULL,
+  data    JSONB NOT NULL
+);
+CREATE UNIQUE INDEX user_email_ukey ON users ((data->>'email'));
+```
+
 ## Development
 
 Build with Maven >= 3 and Docker:
