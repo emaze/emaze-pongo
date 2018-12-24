@@ -11,7 +11,7 @@ interface RelationalEntityRepository<T : Identifiable> : EntityRepository<T> {
 }
 
 abstract class BaseRelationalEntityRepository<T : Identifiable>(
-    override final val entityClass: Class<T>
+    final override val entityClass: Class<T>
 ) : RelationalEntityRepository<T> {
 
     override val tableName: String = entityClass.simpleName
