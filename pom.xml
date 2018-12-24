@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.emaze</groupId>
     <artifactId>emaze-pongo</artifactId>
@@ -153,51 +154,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.28.0</version>
-                <configuration>
-                    <images>
-                        <image>
-                            <name>postgres:9.5.1</name>
-                            <alias>pongo-postgres</alias>
-                            <run>
-                                <wait>
-                                    <log>PostgreSQL init process complete</log>
-                                    <time>60000</time>
-                                </wait>
-                                <env>
-                                    <POSTGRES_DB>pongo</POSTGRES_DB>
-                                </env>
-                                <ports>
-                                    <port>postgres.port:5432</port>
-                                </ports>
-                                <log>
-                                    <enabled>true</enabled>
-                                    <color>blue</color>
-                                </log>
-                            </run>
-                        </image>
-                    </images>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>start</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>stop</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.20</version>
                 <executions>
@@ -216,6 +172,60 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.28.0</version>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>postgres:9.5.1</name>
+                                    <alias>pongo-postgres</alias>
+                                    <run>
+                                        <wait>
+                                            <log>PostgreSQL init process complete</log>
+                                            <time>60000</time>
+                                        </wait>
+                                        <env>
+                                            <POSTGRES_DB>pongo</POSTGRES_DB>
+                                        </env>
+                                        <ports>
+                                            <port>postgres.port:5432</port>
+                                        </ports>
+                                        <log>
+                                            <enabled>true</enabled>
+                                            <color>blue</color>
+                                        </log>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <scm>
         <url>https://github.com/emaze/emaze-pongo</url>
         <developerConnection>scm:git:file://${basedir}</developerConnection>

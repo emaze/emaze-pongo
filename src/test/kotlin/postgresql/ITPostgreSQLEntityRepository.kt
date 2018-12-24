@@ -12,7 +12,9 @@ import org.postgresql.ds.PGSimpleDataSource
 import java.util.*
 
 object PostgresqlContext {
-    val port = System.getenv("PONGO_POSTGRES_PORT")?.toInt() ?: 5432
+    val port = System.getenv("PONGO_POSTGRES_PORT")
+        ?.let { if (it.isBlank()) null else it }
+        ?.toInt() ?: 5432
     val dataSource = PGSimpleDataSource().apply {
         user = "postgres"
         setURL("jdbc:postgresql://localhost:$port/pongo")
