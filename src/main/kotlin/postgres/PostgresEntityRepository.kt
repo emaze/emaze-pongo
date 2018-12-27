@@ -9,16 +9,16 @@ import org.jdbi.v3.core.statement.Query
 import org.slf4j.LoggerFactory
 import java.util.*
 
-open class PostgreSQLEntityRepository<T : Identifiable>(
+open class PostgresEntityRepository<T : Identifiable>(
     entityClass: Class<T>,
     private val jdbi: Jdbi
 ) : BaseRelationalEntityRepository<T>(entityClass) {
 
     companion object {
-        private val logger = LoggerFactory.getLogger(PostgreSQLEntityRepository::class.java)
+        private val logger = LoggerFactory.getLogger(PostgresEntityRepository::class.java)
     }
 
-    override fun createTable(): PostgreSQLEntityRepository<T> = also {
+    override fun createTable(): PostgresEntityRepository<T> = also {
         jdbi.open().use { handle ->
             handle.execute("""
                 CREATE TABLE IF NOT EXISTS $tableName (

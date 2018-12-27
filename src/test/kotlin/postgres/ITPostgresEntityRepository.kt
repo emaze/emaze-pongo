@@ -10,7 +10,7 @@ import org.junit.Test
 import org.postgresql.ds.PGSimpleDataSource
 import java.util.*
 
-object PostgresqlContext {
+object PostgresContext {
     val port = System.getenv("PONGO_POSTGRES_PORT")
         ?.let { if (it.isBlank()) null else it }
         ?.toInt() ?: 5432
@@ -21,11 +21,11 @@ object PostgresqlContext {
     val factory = PostgresEntityRepositoryFactory(Jdbi.create(dataSource))
 }
 
-class ITPostgreSQLEntityRepository {
+class ITPostgresEntityRepository {
 
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
-    val repository = PostgresqlContext.factory.create(SomeEntity::class.java).apply {
+    val repository = PostgresContext.factory.create(SomeEntity::class.java).apply {
         createTable().deleteAll()
     }
 

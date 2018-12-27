@@ -1,4 +1,4 @@
-package postgresql
+package postgres
 
 import org.jdbi.v3.core.argument.Argument
 import org.jdbi.v3.core.argument.ArgumentFactory
