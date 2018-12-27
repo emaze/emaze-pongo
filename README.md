@@ -1,29 +1,39 @@
 # Emaze Pongo
 
-Emaze Pongo is a small java library inspired to the Vaughn Vernon article [The Ideal Domain-Driven Design Aggregate Store?](https://vaughnvernon.co/?p=942).
+Emaze Pongo is a java library inspired to the Vaughn Vernon article [The Ideal Domain-Driven Design Aggregate Store?](https://vaughnvernon.co/?p=942).
 
-Essentially it allows to manage and query easily a repository of entities stored as JSON objects on PostgreSQL, without the aid of a complex ORM.
+Essentially it allows to manage and query easily a repository of entities stored as JSON objects on a relational database, without the aid of a complex ORM.
 
-Emaze Pongo is written in Kotlin, but it is thought to be Java-friendly.
+Emaze Pongo is written in Kotlin, but it is thought to be Java-friendly, and currently supports PostgreSQL, MySQL and MariaDB.
 
 ## Requirements
 
 * JDK 1.8
 * PostgreSQL >= 9.5
+* MySQL >= 5.7
+* MariaDB >= 10.2.3
 
 ## Dependencies
 
-* PostgreSQL JDBC driver
+* PostgreSQL/MySQL/MariaDB JDBC driver
 * Jackson
 * Kotlin runtime
 
 ## Features
 
-* Automatic save or update (using an auto-generated surrogate id)
-* Detection of optimistic locking conflicts
-* Auto-creation of tables and indexes (optional)
+* Automatic save or update (using auto-generated surrogate IDs)
+* Conflicts detection (optimistic locking)
+* Dynamic creation of repository instances
+* Auto-creation of tables (optional)
 
 ## Usage
+
+### Connect to the database
+
+Pongo is based on [JDBI](http://jdbi.org), so it must be initialized with a proper driver, i.e.:
+```java
+final Jdbi jdbi = Jdbi.create("jdbc:postgresql://localhost/pongo", "root", "password");
+```
 
 ### Defining entities
 
@@ -50,16 +60,13 @@ A repository is defined by an interface extending [EntityRepository](https://git
 
 ```java
 public interface UserRepository extends EntityRepository<User> {
-    /* ... */
 }
 ```
 
 It can be instanced using an `EntityRepositoryFactory` in the following way:
  
 ```java
-final DataSource dataSource = ...;
-final ObjectMapper mapper = ...;
-final EntityRepositoryFactory factory = new PostgreSQLEntityRepositoryFactory(dataSource, mapper);
+final EntityRepositoryFactory factory = new PostgreSQLEntityRepositoryFactory(jdbi);
 final UserRepository users = Pongo.create(factory, User.class, UserRepository.class);
 ```
 
@@ -69,23 +76,23 @@ final EntityRepository<User> repository = factory.create(User.class).createTable
 final UserRepository users = Pongo.lift(repository, UserRepository.class);
 ```
 
-The repository methods can have a default implementation:
+The additional repository methods can have a default implementation...
 
 ```java
 public interface UserRepository extends EntityRepository<User> {
 
    default Optional<User> findByName(String name) {
-       return findFirst("where data->>'name' = ?", name);
+       return findFirst("data->>'name' = ?", name);
    }
 }
 ```
 
-Or can be annotated with `@Query`:
+...or can be annotated with `@Query`:
 
 ```java
 public interface UserRepository extends EntityRepository<User> {
     
-   @Query("where data->>'name' = ?")
+   @Query("data->>'name' = ?")
    Optional<User> findByName(String name);
 }
 ```
@@ -103,10 +110,7 @@ The following table summarize the behaviour assuming that `T` is the entity type
 
 ### Executing queries
 
-Currently a query should be a valid `PostgreSQL` query without the prefix `select * from <entity_table>`, 
-that is prepended by the library, assuming that the JSON document is available in the column named `data`.
-
-Obviously the `findFirst...` methods doesn't need of the clause `limit 1`.
+Currently a query must be a valid "where" predicate, assuming that the JSON document is available in the column named `data`.
 
 ### A note about immutability
 
@@ -138,17 +142,19 @@ users.save(newUser);
 In order to synchronize the operations with the Spring transaction manager you can use the `TransactionAwareDataSourceProxy` decorator, i.e.:
 ```java
 @Configuration
-public class PongoConfig {
+public class MyConfig {
     @Bean
-    public EntityRepositoryFactory entityRepositoryFactory(DataSource dataSource, ObjectMapper mapper) {
-        return new PostgresEntityRepositoryFactory(new TransactionAwareDataSourceProxy(dataSource), mapper);
+    public Jdbi jdbi(DataSource dataSource) {
+        return Jdbi.create(new TransactionAwareDataSourceProxy(dataSource));
     }
 }
 ```
 
-### PostgreSQL scripts
+## Database scripts
 
-Is it possible to create the PostgreSQL tables manually as follows:
+Is it possible to create the tables manually as follows.
+
+### PostgreSQL
 ```sql
 CREATE TABLE user (
   id      BIGSERIAL PRIMARY KEY,
@@ -158,19 +164,33 @@ CREATE TABLE user (
 CREATE UNIQUE INDEX user_email_ukey ON users ((data->>'email'));
 ```
 
+### MySQL
+```sql
+CREATE TABLE user (
+  id      BIGINT PRIMARY KEY AUTO_INCREMENT,
+  version BIGINT NOT NULL,
+  data    JSON NOT NULL,
+  email   VARCHAR(255) GENERATED ALWAYS AS (data->'$.email'),
+  UNIQUE INDEX user_email_ukey (email)
+);
+```
+
+### MariaDB
+```sql
+CREATE TABLE user (
+  id      BIGINT PRIMARY KEY AUTO_INCREMENT,
+  version BIGINT NOT NULL,
+  data    JSON NOT NULL,
+  email   VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(data, '$.email')) PERSISTENT UNIQUE
+);
+```
+
 ## Development
 
 Build with Maven >= 3 and Docker:
 ```bash
-mvn package
+mvn -Pdocker package
 ```
-
-## Further developments
-
-* Provide methods to read a list of results lazily via iteration
-* Provide a simpler way to query the aggregates using an SQL query translated to a JSON-based query
-* Integrate it with the Spring transaction manager in order to support the automatic updates of the changed entities
-* Introduce an optional entities cache at transaction level
 
 ## Contribute!
 
