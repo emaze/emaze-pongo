@@ -1,6 +1,8 @@
 package net.emaze.pongo.integration
 
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import net.emaze.pongo.Identifiable
+import net.emaze.pongo.Json
 import net.emaze.pongo.OptimisticLockException
 import net.emaze.pongo.attach
 import net.emaze.pongo.postgres.MysqlEntityRepositoryFactory
@@ -23,6 +25,10 @@ class ITMysqlEntityRepository {
 
     val repository = MysqlContext.factory.create(SomeEntity::class.java).apply {
         createTable().deleteAll()
+    }
+
+    init {
+        Json.jackson.registerModule(KotlinModule())
     }
 
     @Test

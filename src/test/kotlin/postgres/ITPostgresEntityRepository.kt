@@ -1,10 +1,10 @@
 package net.emaze.pongo.postgres
 
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.Json
 import net.emaze.pongo.OptimisticLockException
 import net.emaze.pongo.attach
-import net.emaze.pongo.postgres.PostgresEntityRepositoryFactory
 import org.jdbi.v3.core.Jdbi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -29,6 +29,10 @@ class ITPostgresEntityRepository {
 
     val repository = PostgresContext.factory.create(SomeEntity::class.java).apply {
         createTable().deleteAll()
+    }
+
+    init {
+        Json.jackson.registerModule(KotlinModule())
     }
 
     @Test

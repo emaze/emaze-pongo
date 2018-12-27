@@ -1,8 +1,8 @@
 package net.emaze.pongo
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.argument.Argument
 import org.jdbi.v3.core.argument.ArgumentFactory
@@ -33,7 +33,7 @@ class JsonJdbiPlugin : JdbiPlugin {
 
 data class Json<T>(val value: T) {
     companion object {
-        val jackson = jacksonObjectMapper().apply {
+        val jackson = ObjectMapper().apply {
             setSerializationInclusion(JsonInclude.Include.NON_NULL)
         }
     }
