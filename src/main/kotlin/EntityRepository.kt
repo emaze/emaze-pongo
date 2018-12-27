@@ -5,8 +5,6 @@ package net.emaze.pongo
 
 import net.emaze.pongo.annotation.annotatedMethodHandlerFactory
 import net.emaze.pongo.proxy.delegateTo
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
 import java.util.*
 import kotlin.NoSuchElementException
 
@@ -87,8 +85,6 @@ interface EntityRepository<T : Identifiable> {
             NoSuchElementException("Query on $entityClass have returned no results")
         }
 }
-
-
 
 /**
  * The factory of entity repositories.

@@ -1,33 +1,27 @@
-package net.emaze.pongo.postgres
+package net.emaze.pongo.integration
 
 import net.emaze.pongo.Identifiable
-import net.emaze.pongo.Json
 import net.emaze.pongo.OptimisticLockException
 import net.emaze.pongo.attach
-import net.emaze.pongo.postgres.PostgresEntityRepositoryFactory
+import net.emaze.pongo.postgres.MysqlEntityRepositoryFactory
 import org.jdbi.v3.core.Jdbi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-import org.postgresql.ds.PGSimpleDataSource
 import java.util.*
 
-object PostgresContext {
-    val port = System.getenv("PONGO_POSTGRES_PORT")
+object MysqlContext {
+    val port = System.getenv("PONGO_MYSQL_PORT")
         ?.let { if (it.isBlank()) null else it }
-        ?.toInt() ?: 5432
-    val dataSource = PGSimpleDataSource().apply {
-        user = "postgres"
-        setURL("jdbc:postgresql://localhost:$port/pongo")
-    }
-    val factory = PostgresEntityRepositoryFactory(Jdbi.create(dataSource))
+        ?.toInt() ?: 3306
+    val factory = MysqlEntityRepositoryFactory(Jdbi.create("jdbc:mysql://localhost:$port/pongo", "root", ""))
 }
 
-class ITPostgresEntityRepository {
+class ITMysqlEntityRepository {
 
     data class SomeEntity(var x: Int, var y: Int) : Identifiable()
 
-    val repository = PostgresContext.factory.create(SomeEntity::class.java).apply {
+    val repository = MysqlContext.factory.create(SomeEntity::class.java).apply {
         createTable().deleteAll()
     }
 
@@ -90,7 +84,7 @@ class ITPostgresEntityRepository {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.searchAll("(data->>'x')::int < ?", 3)
+        val got = repository.searchAll("JSON_EXTRACT(data, '$.x') < ?", 3)
         assertEquals(listOf(SomeEntity(1, 2), SomeEntity(2, 5)), got)
     }
 
@@ -108,9 +102,10 @@ class ITPostgresEntityRepository {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.searchFirst("(data->>'x')::int < ?", 3)
+        val got = repository.searchFirst("JSON_EXTRACT(data, '$.x') < ?", 3)
         assertEquals(Optional.of(SomeEntity(1, 2)), got)
     }
+
 
     @Test
     fun itCanSearchFirstByExample() {

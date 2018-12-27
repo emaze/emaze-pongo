@@ -1,30 +1,30 @@
-package net.emaze.pongo.postgres
+package net.emaze.pongo.mysql
 
 import net.emaze.pongo.BaseRelationalEntityRepository
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.Json
 import org.jdbi.v3.core.Jdbi
 
-open class PostgresEntityRepository<T : Identifiable>(
+open class MysqlEntityRepository<T : Identifiable>(
     entityClass: Class<T>,
     jdbi: Jdbi
 ) : BaseRelationalEntityRepository<T>(entityClass, jdbi) {
 
-    override fun createTable(): PostgresEntityRepository<T> = also {
+    override fun createTable(): MysqlEntityRepository<T> = also {
         jdbi.open().use { handle ->
             handle.execute("""
                 CREATE TABLE IF NOT EXISTS $tableName (
-                  id      BIGSERIAL PRIMARY KEY,
+                  id      BIGINT PRIMARY KEY AUTO_INCREMENT,
                   version BIGINT NOT NULL,
-                  data    JSONB NOT NULL
+                  data    JSON NOT NULL
                 )
             """)
         }
     }
 
     override fun searchAllLike(example: Any) =
-        searchAll("data @> ?", Json(example))
+        searchAll("JSON_CONTAINS(data, ?, '$')", Json(example))
 
     override fun searchFirstLike(example: Any) =
-        searchFirst("data @> ?", Json(example))
+        searchFirst("JSON_CONTAINS(data, ?, '$')", Json(example))
 }
