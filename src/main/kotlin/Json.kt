@@ -7,13 +7,20 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.argument.Argument
 import org.jdbi.v3.core.argument.ArgumentFactory
 import org.jdbi.v3.core.config.ConfigRegistry
+import org.jdbi.v3.core.config.JdbiConfig
 import org.jdbi.v3.core.generic.GenericTypes
 import org.jdbi.v3.core.mapper.ColumnMapper
 import org.jdbi.v3.core.mapper.ColumnMapperFactory
 import org.jdbi.v3.core.spi.JdbiPlugin
-import org.postgresql.util.PGobject
 import java.lang.reflect.Type
 import java.util.*
+
+class JsonConfig(
+    var argumentFactory: ArgumentFactory = DefaultJsonArgumentFactory()
+) : JdbiConfig<JsonConfig> {
+
+    override fun createCopy() = JsonConfig(argumentFactory)
+}
 
 class JsonJdbiPlugin : JdbiPlugin {
     override fun customizeJdbi(jdbi: Jdbi) {
@@ -33,17 +40,22 @@ data class Json<T>(val value: T) {
 }
 
 private class JsonArgumentFactory : ArgumentFactory {
-    override fun build(type: Type, value: Any?, config: ConfigRegistry) =
+    override fun build(type: Type, value: Any?, config: ConfigRegistry): Optional<Argument> =
         if (value is Json<*>) {
-            Optional.of(Argument { position, statement, _ ->
-                statement.setObject(position, PGobject().apply {
-                    this.type = "jsonb"
-                    this.value = Json.jackson.writeValueAsString(value.value)
-                })
-            })
+            val json = Json.jackson.writeValueAsString(value.value)
+            config.get(JsonConfig::class.java)
+                .argumentFactory
+                .build(type, json, config)
         } else {
             Optional.empty()
         }
+}
+
+private class DefaultJsonArgumentFactory : ArgumentFactory {
+    override fun build(type: Type, value: Any?, config: ConfigRegistry) =
+        Optional.of(Argument { position, statement, _ ->
+            statement.setString(position, value as String)
+        })
 }
 
 private class JsonColumnMapperFactory : ColumnMapperFactory {

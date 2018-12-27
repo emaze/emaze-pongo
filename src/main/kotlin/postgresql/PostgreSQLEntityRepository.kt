@@ -1,6 +1,5 @@
 package net.emaze.pongo.postgres
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.emaze.pongo.BaseRelationalEntityRepository
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.Json
@@ -12,8 +11,7 @@ import java.util.*
 
 open class PostgreSQLEntityRepository<T : Identifiable>(
     entityClass: Class<T>,
-    val jdbi: Jdbi,
-    val mapper: ObjectMapper
+    private val jdbi: Jdbi
 ) : BaseRelationalEntityRepository<T>(entityClass) {
 
     companion object {
@@ -53,7 +51,7 @@ open class PostgreSQLEntityRepository<T : Identifiable>(
                 .also { query -> params.forEachIndexed { index, value -> query.bind(index, value) } }
                 .also { query -> f(query) }
                 .map { result, _ ->
-                    mapper.readValue(result.getString(1), entityClass).apply {
+                    Json.jackson.readValue(result.getString(1), entityClass).apply {
                         metadata = Identifiable.Metadata(identity = result.getLong(2), version = result.getLong(3))
                     }
                 }

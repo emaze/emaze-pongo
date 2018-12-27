@@ -1,10 +1,9 @@
 package net.emaze.pongo.postgres
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.OptimisticLockException
 import net.emaze.pongo.attach
+import org.jdbi.v3.core.Jdbi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -19,8 +18,7 @@ object PostgresqlContext {
         user = "postgres"
         setURL("jdbc:postgresql://localhost:$port/pongo")
     }
-    val mapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
-    val factory = PostgresEntityRepositoryFactory(dataSource, mapper)
+    val factory = PostgresEntityRepositoryFactory(Jdbi.create(dataSource))
 }
 
 class ITPostgreSQLEntityRepository {
