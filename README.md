@@ -1,6 +1,6 @@
 # Emaze Pongo
 
-Emaze Pongo is a java library inspired to the Vaughn Vernon article [The Ideal Domain-Driven Design Aggregate Store?](https://vaughnvernon.co/?p=942).
+Emaze Pongo is a java library inspired to the Vaughn Vernon article [The Ideal Domain-Driven Design Aggregate Store?](https://kalele.io/blog-posts/the-ideal-domain-driven-design-aggregate-store/).
 
 Essentially it allows to manage and query easily a repository of entities stored as JSON objects on a relational database, without the aid of a complex ORM.
 
