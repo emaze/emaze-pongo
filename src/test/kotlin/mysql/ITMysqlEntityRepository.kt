@@ -10,13 +10,13 @@ import org.jdbi.v3.core.Jdbi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-import java.util.*
+import java.util.Optional
 
 object MysqlContext {
     val port = System.getenv("PONGO_MYSQL_PORT")
         ?.let { if (it.isBlank()) null else it }
         ?.toInt() ?: 3306
-    val factory = MysqlEntityRepositoryFactory(Jdbi.create("jdbc:mysql://localhost:$port/pongo", "root", ""))
+    val factory = MysqlEntityRepositoryFactory(Jdbi.create("jdbc:mysql://127.0.0.1:$port/pongo", "root", ""))
 }
 
 class ITMysqlEntityRepository {

@@ -180,6 +180,7 @@
                 <configuration>
                     <environmentVariables>
                         <PONGO_POSTGRES_PORT>${postgres.port}</PONGO_POSTGRES_PORT>
+                        <PONGO_MYSQL_PORT>${mariadb.port}</PONGO_MYSQL_PORT>
                     </environmentVariables>
                 </configuration>
             </plugin>
@@ -213,6 +214,31 @@
                                         <log>
                                             <enabled>true</enabled>
                                             <color>blue</color>
+                                        </log>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>mariadb:10.3</name>
+                                    <alias>pongo-mariadb</alias>
+                                    <run>
+                                        <wait>
+                                            <tcp>
+                                                <ports>
+                                                    <port>3306</port>
+                                                </ports>
+                                            </tcp>
+                                            <time>60000</time>
+                                        </wait>
+                                        <env>
+                                            <MYSQL_DATABASE>pongo</MYSQL_DATABASE>
+                                            <MYSQL_ALLOW_EMPTY_PASSWORD>yes</MYSQL_ALLOW_EMPTY_PASSWORD>
+                                        </env>
+                                        <ports>
+                                            <port>mariadb.port:3306</port>
+                                        </ports>
+                                        <log>
+                                            <enabled>true</enabled>
+                                            <color>cyan</color>
                                         </log>
                                     </run>
                                 </image>
