@@ -30,7 +30,7 @@ public class ITJavaUsage {
     }
 
     public interface JavaEntityRepository extends EntityRepository<JavaEntity> {
-        @Query("where (data->>'x')::int < ?")
+        @Query("(data->>'x')::int < ?")
         List<JavaEntity> searchAllLowerThan(int x);
     }
 
