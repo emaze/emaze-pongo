@@ -8,27 +8,27 @@ import net.emaze.pongo.Identifiable
 import net.emaze.pongo.lift
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.util.*
+import java.util.Optional
 
 class AnnotatedEntityRepositoryTest {
 
     data class Entity(val x: Int) : Identifiable()
 
     interface Entities : EntityRepository<Entity> {
-        @Query("methodReturningListQuery")
+        @Where("methodReturningListQuery")
         fun methodReturningList(param: Int): List<Entity>
 
-        @Query("methodReturningSetQuery")
+        @Where("methodReturningSetQuery")
         fun methodReturningSet(param: Int): Set<Entity>
 
-        @Query("methodReturningNotNullEntityQuery")
+        @Where("methodReturningNotNullEntityQuery")
         fun methodReturningNotNullEntity(param: String): Entity
 
-        @Query("methodReturningNullableEntityQuery")
+        @Where("methodReturningNullableEntityQuery")
         @Nullable
         fun methodReturningNullableEntity(param: String): Entity?
 
-        @Query("methodReturningOptionalEntityQuery")
+        @Where("methodReturningOptionalEntityQuery")
         fun methodReturningOptionalEntity(param: String): Optional<Entity>
     }
 

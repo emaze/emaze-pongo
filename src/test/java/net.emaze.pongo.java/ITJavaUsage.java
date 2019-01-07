@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import net.emaze.pongo.EntityRepository;
 import net.emaze.pongo.Identifiable;
 import net.emaze.pongo.Pongo;
-import net.emaze.pongo.annotation.Query;
+import net.emaze.pongo.annotation.Where;
 import net.emaze.pongo.Pongoλ;
 import net.emaze.pongo.postgres.PostgresContext;
 import net.emaze.pongo.postgres.PostgresEntityRepository;
@@ -30,7 +30,7 @@ public class ITJavaUsage {
     }
 
     public interface JavaEntityRepository extends EntityRepository<JavaEntity> {
-        @Query("(data->>'x')::int < ?")
+        @Where("(this->>'x')::int < ?")
         List<JavaEntity> searchAllLowerThan(int x);
     }
 

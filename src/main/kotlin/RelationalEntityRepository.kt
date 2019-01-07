@@ -3,7 +3,7 @@ package net.emaze.pongo
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.statement.Query
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.Optional
 
 interface RelationalEntityRepository<T : Identifiable> : EntityRepository<T> {
 
@@ -38,7 +38,7 @@ abstract class BaseRelationalEntityRepository<T : Identifiable>(
     private fun doSearch(query: String, params: Array<out Any?>, f: (Query) -> Query = { it }): List<T> =
         jdbi.open().use { handle ->
             val where = if (query.isEmpty()) "" else "where $query"
-            handle.createQuery("select data, id, version from $tableName $where")
+            handle.createQuery("select this, id, version from $tableName $where")
                 .also { query -> params.forEachIndexed { index, value -> query.bind(index, value) } }
                 .also { query -> f(query) }
                 .map { result, _ ->
@@ -68,7 +68,7 @@ abstract class BaseRelationalEntityRepository<T : Identifiable>(
     private fun insert(entity: T): T {
         logger.debug("Inserting entity {} into {}", entity, tableName)
         entity.metadata = jdbi.open().use { handle ->
-            handle.createUpdate("insert into $tableName(version, data) values(0, ?)")
+            handle.createUpdate("insert into $tableName(version, this) values(0, ?)")
                 .bind(0, Json(entity))
                 .executeAndReturnGeneratedKeys()
                 .map { result, _ -> Identifiable.Metadata(identity = result.getLong(1), version = 0) }
@@ -83,11 +83,11 @@ abstract class BaseRelationalEntityRepository<T : Identifiable>(
         val updated = jdbi.open().use { handle ->
             handle.createUpdate("""
                 update $tableName
-                set data = :data, version = version + 1
+                set this = :this, version = version + 1
                 where id = :identity and version = :version
             """)
                 .bindBean(entity.metadata)
-                .bind("data", Json(entity))
+                .bind("this", Json(entity))
                 .execute()
         }
         if (updated != 1) throw OptimisticLockException("Detected conflict of versions updating entity $entity")

@@ -90,7 +90,7 @@ class ITMysqlEntityRepository {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.searchAll("JSON_EXTRACT(data, '$.x') < ?", 3)
+        val got = repository.searchAll("JSON_EXTRACT(this, '$.x') < ?", 3)
         assertEquals(listOf(SomeEntity(1, 2), SomeEntity(2, 5)), got)
     }
 
@@ -108,7 +108,7 @@ class ITMysqlEntityRepository {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.searchFirst("JSON_EXTRACT(data, '$.x') < ?", 3)
+        val got = repository.searchFirst("JSON_EXTRACT(this, '$.x') < ?", 3)
         assertEquals(Optional.of(SomeEntity(1, 2)), got)
     }
 

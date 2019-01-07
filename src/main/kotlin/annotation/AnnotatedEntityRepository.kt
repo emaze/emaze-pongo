@@ -4,8 +4,8 @@ import net.emaze.pongo.EntityRepository
 import net.emaze.pongo.Identifiable
 import net.emaze.pongo.proxy.MethodHandler
 import net.emaze.pongo.proxy.MethodHandlerFactory
-import java.util.*
-import kotlin.collections.LinkedHashSet
+import java.util.NoSuchElementException
+import java.util.Optional
 
 internal fun <T : Identifiable> annotatedMethodHandlerFactory(): MethodHandlerFactory<EntityRepository<T>> = { repository, method ->
     fun findAllAsList(query: String): MethodHandler = { args -> repository.searchAll(query, *args) }
@@ -16,7 +16,7 @@ internal fun <T : Identifiable> annotatedMethodHandlerFactory(): MethodHandlerFa
         repository.searchFirst(query, *args).orElseThrow { NoSuchElementException("The query $query has no result") }
     }
 
-    val query = method.getAnnotation(Query::class.java)?.value ?: throw UnsupportedOperationException("The method ${method.name} has no @Query annotation")
+    val query = method.getAnnotation(Where::class.java)?.value ?: throw UnsupportedOperationException("The method ${method.name} has no @Where annotation")
     val nullable = method.isAnnotationPresent(Nullable::class.java)
     when {
         method.returnType.isAssignableFrom(List::class.java) -> findAllAsList(query)

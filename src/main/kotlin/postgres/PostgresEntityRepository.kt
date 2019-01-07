@@ -16,15 +16,15 @@ open class PostgresEntityRepository<T : Identifiable>(
                 CREATE TABLE IF NOT EXISTS $tableName (
                   id      BIGSERIAL PRIMARY KEY,
                   version BIGINT NOT NULL,
-                  data    JSONB NOT NULL
+                  this    JSONB NOT NULL
                 )
             """)
         }
     }
 
     override fun searchAllLike(example: Any) =
-        searchAll("data @> ?", Json(example))
+        searchAll("this @> ?", Json(example))
 
     override fun searchFirstLike(example: Any) =
-        searchFirst("data @> ?", Json(example))
+        searchFirst("this @> ?", Json(example))
 }

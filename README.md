@@ -82,17 +82,17 @@ The additional repository methods can have a default implementation...
 public interface UserRepository extends EntityRepository<User> {
 
    default Optional<User> findByName(String name) {
-       return findFirst("data->>'name' = ?", name);
+       return findFirst("this->>'name' = ?", name);
    }
 }
 ```
 
-...or can be annotated with `@Query`:
+...or can be annotated with `@Where`:
 
 ```java
 public interface UserRepository extends EntityRepository<User> {
     
-   @Query("data->>'name' = ?")
+   @Where("this->>'name' = ?")
    Optional<User> findByName(String name);
 }
 ```
@@ -110,7 +110,7 @@ The following table summarize the behaviour assuming that `T` is the entity type
 
 ### Executing queries
 
-Currently a query must be a valid "where" predicate, assuming that the JSON document is available in the column named `data`.
+Currently a query must be a valid "where" predicate, assuming that the JSON document is available in the column named `this`.
 
 ### A note about immutability
 
@@ -159,9 +159,9 @@ Is it possible to create the tables manually as follows.
 CREATE TABLE user (
   id      BIGSERIAL PRIMARY KEY,
   version BIGINT NOT NULL,
-  data    JSONB NOT NULL
+  this    JSONB NOT NULL
 );
-CREATE UNIQUE INDEX user_email_ukey ON users ((data->>'email'));
+CREATE UNIQUE INDEX user_email_ukey ON users ((this->>'email'));
 ```
 
 ### MySQL
@@ -169,8 +169,8 @@ CREATE UNIQUE INDEX user_email_ukey ON users ((data->>'email'));
 CREATE TABLE user (
   id      BIGINT PRIMARY KEY AUTO_INCREMENT,
   version BIGINT NOT NULL,
-  data    JSON NOT NULL,
-  email   VARCHAR(255) GENERATED ALWAYS AS (data->'$.email'),
+  this    JSON NOT NULL,
+  email   VARCHAR(255) GENERATED ALWAYS AS (this->'$.email'),
   UNIQUE INDEX user_email_ukey (email)
 );
 ```
@@ -180,8 +180,8 @@ CREATE TABLE user (
 CREATE TABLE user (
   id      BIGINT PRIMARY KEY AUTO_INCREMENT,
   version BIGINT NOT NULL,
-  data    JSON NOT NULL,
-  email   VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(data, '$.email')) PERSISTENT UNIQUE
+  this    JSON NOT NULL,
+  email   VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(this, '$.email')) PERSISTENT UNIQUE
 );
 ```
 

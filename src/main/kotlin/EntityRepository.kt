@@ -5,8 +5,7 @@ package net.emaze.pongo
 
 import net.emaze.pongo.annotation.annotatedMethodHandlerFactory
 import net.emaze.pongo.proxy.delegateTo
-import java.util.*
-import kotlin.NoSuchElementException
+import java.util.Optional
 
 class OptimisticLockException(message: String) : RuntimeException(message)
 
@@ -100,7 +99,7 @@ inline fun <reified T : Identifiable> EntityRepositoryFactory.create(): EntityRe
  * Create a proxied repository implementing the given target class, delegating methods
  * to the effective repository created by this factory for the specified entity class.
  *
- * The abstract methods of target class should be annotated with @Query.
+ * The abstract methods of target class should be annotated with @Where.
  */
 fun <T : Identifiable, R : EntityRepository<T>> EntityRepositoryFactory.create(entityClass: Class<T>, targetClass: Class<R>): R =
     create(entityClass).lift(targetClass)
@@ -108,7 +107,7 @@ fun <T : Identifiable, R : EntityRepository<T>> EntityRepositoryFactory.create(e
 /**
  * Lift the effective repository to the specified abstract target class.
  *
- * The abstract methods should be annotated with @Query.
+ * The abstract methods should be annotated with @Where.
  */
 fun <T : Identifiable, R : EntityRepository<T>> EntityRepository<T>.lift(targetClass: Class<R>): R =
     targetClass.delegateTo(this, annotatedMethodHandlerFactory())

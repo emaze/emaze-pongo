@@ -16,15 +16,15 @@ open class MysqlEntityRepository<T : Identifiable>(
                 CREATE TABLE IF NOT EXISTS $tableName (
                   id      BIGINT PRIMARY KEY AUTO_INCREMENT,
                   version BIGINT NOT NULL,
-                  data    JSON NOT NULL
+                  this    JSON NOT NULL
                 )
             """)
         }
     }
 
     override fun searchAllLike(example: Any) =
-        searchAll("JSON_CONTAINS(data, ?, '$')", Json(example))
+        searchAll("JSON_CONTAINS(this, ?, '$')", Json(example))
 
     override fun searchFirstLike(example: Any) =
-        searchFirst("JSON_CONTAINS(data, ?, '$')", Json(example))
+        searchFirst("JSON_CONTAINS(this, ?, '$')", Json(example))
 }

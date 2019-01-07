@@ -10,7 +10,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.postgresql.ds.PGSimpleDataSource
-import java.util.*
+import java.util.Optional
 
 object PostgresContext {
     val port = System.getenv("PONGO_POSTGRES_PORT")
@@ -94,7 +94,7 @@ class ITPostgresEntityRepository {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.searchAll("(data->>'x')::int < ?", 3)
+        val got = repository.searchAll("(this->>'x')::int < ?", 3)
         assertEquals(listOf(SomeEntity(1, 2), SomeEntity(2, 5)), got)
     }
 
@@ -112,7 +112,7 @@ class ITPostgresEntityRepository {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
         repository.save(SomeEntity(3, 3))
-        val got = repository.searchFirst("(data->>'x')::int < ?", 3)
+        val got = repository.searchFirst("(this->>'x')::int < ?", 3)
         assertEquals(Optional.of(SomeEntity(1, 2)), got)
     }
 
