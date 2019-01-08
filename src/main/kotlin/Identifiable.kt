@@ -14,6 +14,15 @@ abstract class Identifiable(@JsonIgnore var metadata: Metadata? = null) {
     data class Metadata(val identity: Long, val version: Long)
 
     /**
+     * Convenience method to get the object identity.
+     *
+     * @throws IllegalStateException if this object has no metadata
+     */
+    @get:JsonIgnore
+    val identity: Long
+        get() = (metadata ?: throw IllegalStateException("Cannot get identity of a transient object")).identity
+
+    /**
      * Two Identifiables are considered equals if they have the same class and the same metadata.
      */
     override fun equals(other: Any?): Boolean {
