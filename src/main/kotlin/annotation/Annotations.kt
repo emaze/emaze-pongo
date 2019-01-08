@@ -1,6 +1,13 @@
 package net.emaze.pongo.annotation
 
 /**
+ * Overrides the default table name used to store the entity.
+ */
+@Target(AnnotationTarget.CLASS)
+@MustBeDocumented
+annotation class Table(val value: String)
+
+/**
  * Declares the "where" clause used by the annotated repository method.
  */
 @Target(AnnotationTarget.FUNCTION)

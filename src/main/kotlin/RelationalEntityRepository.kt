@@ -1,5 +1,6 @@
 package net.emaze.pongo
 
+import net.emaze.pongo.annotation.Table
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.statement.Query
 import org.slf4j.LoggerFactory
@@ -22,9 +23,12 @@ abstract class BaseRelationalEntityRepository<T : Identifiable>(
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    override val tableName: String = entityClass.simpleName
-        .decapitalize()
-        .replace("[A-Z]".toRegex()) { match -> "_${match.value.toLowerCase()}" }
+    override val tableName: String = run {
+        val annotation = entityClass.getAnnotation(Table::class.java)?.value
+        annotation ?: entityClass.simpleName
+            .decapitalize()
+            .replace("[A-Z]".toRegex()) { match -> "_${match.value.toLowerCase()}" }
+    }
 
     override fun save(entity: T) =
         entity.metadata?.let { update(entity) } ?: insert(entity)
