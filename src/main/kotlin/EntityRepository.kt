@@ -34,6 +34,11 @@ interface EntityRepository<T : Identifiable> {
     fun deleteAll()
 
     /**
+     * Search an entity by ID.
+     */
+    fun search(id: Long): Optional<T>
+
+    /**
      * Get all the entities.
      */
     fun searchAll(): List<T> = searchAll("")
@@ -64,12 +69,25 @@ interface EntityRepository<T : Identifiable> {
     fun searchFirstLike(example: Any): Optional<T>
 
     /**
+     * Get the entity by ID.
+     *
+     * @throws NoSuchElementException if the entity is not found
+     */
+    fun find(id: Long): T = search(id).orElseThrow {
+        NoSuchElementException("Entity $entityClass not found with ID $id")
+    }
+
+    /**
      * Get the first entity.
+     *
+     * @throws NoSuchElementException if the entity is not found
      */
     fun findFirst(): T = findFirst("")
 
     /**
      * Get the first entity satisfying the query.
+     *
+     * @throws NoSuchElementException if the entity is not found
      */
     fun findFirst(query: String, vararg params: Any?): T =
         searchFirst(query, *params).orElseThrow {
@@ -78,6 +96,8 @@ interface EntityRepository<T : Identifiable> {
 
     /**
      * Get the first entity with the properties equals to the example's ones.
+     *
+     * @throws NoSuchElementException if the entity is not found
      */
     fun findFirstLike(example: Any): T =
         searchFirstLike(example).orElseThrow {

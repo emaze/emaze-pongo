@@ -29,6 +29,9 @@ abstract class BaseRelationalEntityRepository<T : Identifiable>(
     override fun save(entity: T) =
         entity.metadata?.let { update(entity) } ?: insert(entity)
 
+    override fun search(id: Long) =
+        Optional.ofNullable(doSearch("id = ?", arrayOf(id)) { it.setMaxRows(1) }.getOrElse(0) { null })
+
     override fun searchAll(query: String, vararg params: Any?) =
         doSearch(query, params)
 

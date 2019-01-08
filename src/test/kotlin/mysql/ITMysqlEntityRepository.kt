@@ -86,6 +86,18 @@ class ITMysqlEntityRepository {
     }
 
     @Test
+    fun itCanFindAnExistingEntity() {
+        val entity = repository.save(SomeEntity(1, 2))
+        val got = repository.find(entity.metadata!!.identity)
+        assertEquals(entity, got)
+    }
+
+    @Test(expected = NoSuchElementException::class)
+    fun itCannotFindANotExistingEntity() {
+        repository.find(-1)
+    }
+
+    @Test
     fun itCanSearchAllByCriteria() {
         repository.save(SomeEntity(1, 2))
         repository.save(SomeEntity(2, 5))
