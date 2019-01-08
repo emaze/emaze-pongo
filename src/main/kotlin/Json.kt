@@ -1,6 +1,7 @@
 package net.emaze.pongo
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.jdbi.v3.core.Jdbi
@@ -13,7 +14,7 @@ import org.jdbi.v3.core.mapper.ColumnMapper
 import org.jdbi.v3.core.mapper.ColumnMapperFactory
 import org.jdbi.v3.core.spi.JdbiPlugin
 import java.lang.reflect.Type
-import java.util.*
+import java.util.Optional
 
 class JsonConfig(
     var argumentFactory: ArgumentFactory = DefaultJsonArgumentFactory()
@@ -31,7 +32,7 @@ class JsonJdbiPlugin : JdbiPlugin {
     }
 }
 
-data class Json<T>(val value: T) {
+data class Json<T>(@JsonValue val value: T) {
     companion object {
         val jackson = ObjectMapper().apply {
             setSerializationInclusion(JsonInclude.Include.NON_NULL)
