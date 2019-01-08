@@ -1,10 +1,9 @@
 # Emaze Pongo
 
-Emaze Pongo is a java library inspired to the Vaughn Vernon article [The Ideal Domain-Driven Design Aggregate Store?](https://kalele.io/blog-posts/the-ideal-domain-driven-design-aggregate-store/).
+Emaze Pongo allows to manage and query a repository of entities stored as JSON objects on a relational database in an easy way, without the aid of a complex ORM.
+It is designed to support the Domain Driven Design and CQRS programming paradigms.
 
-Essentially it allows to manage and query easily a repository of entities stored as JSON objects on a relational database, without the aid of a complex ORM.
-
-Emaze Pongo is written in Kotlin, but it is thought to be Java-friendly, and currently supports PostgreSQL, MySQL and MariaDB.
+The library is written in Kotlin, but it is thought to be Java-friendly, and currently supports PostgreSQL, MySQL and MariaDB.
 
 ## Requirements
 
@@ -195,6 +194,10 @@ mvn -Pdocker package
 ## Contribute!
 
 Emaze Pongo is under active development, your contribution is welcome!
+
+## Credits
+
+Emaze Pongo is inspired to the Vaughn Vernon article [The Ideal Domain-Driven Design Aggregate Store?](https://kalele.io/blog-posts/the-ideal-domain-driven-design-aggregate-store/).
 
 ## License
 
