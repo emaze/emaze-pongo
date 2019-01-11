@@ -30,6 +30,19 @@ abstract class BaseRelationalEntityRepository<T : Identifiable>(
             .replace("[A-Z]".toRegex()) { match -> "_${match.value.toLowerCase()}" }
     }
 
+    override fun create(entity: T): T {
+        val metadata = entity.metadata ?: throw IllegalArgumentException("Cannot create an entity without metadata")
+        logger.debug("Create entity {} with {} into {}", entity, metadata, tableName)
+        jdbi.open().use { handle ->
+            handle.createUpdate("insert into $tableName(id, version, this) values(?, ?, ?)")
+                .bind(0, metadata.identity)
+                .bind(1, metadata.version)
+                .bind(2, Json(entity))
+                .execute()
+        }
+        return entity
+    }
+
     override fun save(entity: T) =
         entity.metadata?.let { update(entity) } ?: insert(entity)
 

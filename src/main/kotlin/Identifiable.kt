@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
  */
 abstract class Identifiable(@JsonIgnore var metadata: Metadata? = null) {
 
-    data class Metadata(val identity: Long, val version: Long)
+    data class Metadata(val identity: Long, val version: Long = 0)
 
     /**
      * Convenience method to get the object identity.

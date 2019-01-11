@@ -14,6 +14,13 @@ interface EntityRepository<T : Identifiable> {
     val entityClass: Class<T>
 
     /**
+     * Create a new entity with the given metadata.
+     *
+     * @throws RuntimeException on duplicate key error
+     */
+    fun create(entity: T): T
+
+    /**
      * Save or update the entity.
      *
      * @throws OptimisticLockException if the entity has been already updated by another transaction

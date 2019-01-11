@@ -2,6 +2,7 @@ package net.emaze.pongo.postgres
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import net.emaze.pongo.Identifiable
+import net.emaze.pongo.Identifiable.Metadata
 import net.emaze.pongo.Json
 import net.emaze.pongo.OptimisticLockException
 import net.emaze.pongo.attach
@@ -36,11 +37,25 @@ class ITPostgresEntityRepository {
     }
 
     @Test
-    fun itCanInsertNewEntity() {
+    fun itCanSaveNewEntity() {
         repository.save(SomeEntity(1, 2))
         val got = repository.searchAll()
         assertEquals(1, got.size)
         assertEquals(listOf(SomeEntity(1, 2)), got)
+    }
+
+    @Test
+    fun itCanCreateNewEntity() {
+        repository.create(SomeEntity(1, 2).attach(Metadata(identity = 123)))
+        val got = repository.search(123)
+        assertEquals(Optional.of(SomeEntity(1, 2)), got)
+    }
+
+    @Test(expected = RuntimeException::class)
+    fun itCannotCreateDuplicatedEntity() {
+        val entity = SomeEntity(1, 2).attach(Metadata(identity = 123))
+        repository.create(entity)
+        repository.create(entity)
     }
 
     @Test
@@ -85,7 +100,7 @@ class ITPostgresEntityRepository {
 
     @Test(expected = IllegalStateException::class)
     fun itCannotDeleteANotExistingEntity() {
-        val entity = SomeEntity(1, 2).attach(Identifiable.Metadata(identity = 1, version = 4))
+        val entity = SomeEntity(1, 2).attach(Metadata(identity = 1, version = 4))
         repository.delete(entity)
     }
 
