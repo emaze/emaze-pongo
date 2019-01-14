@@ -1,9 +1,10 @@
 package net.emaze.pongo.proxy
 
 import java.lang.invoke.MethodHandles
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
-import java.util.*
+import java.util.Objects
 
 inline fun <reified T : Any, R : T> Class<R>.delegateTo(receiver: T, noinline methodHandlers: MethodHandlerFactory<T>): R =
     delegateTo(receiver, T::class.java, methodHandlers)
@@ -20,7 +21,15 @@ fun <T : Any, R : T> Class<R>.delegateTo(receiver: T, receiverClass: Class<T>, m
     baseMethods.associateByTo(
         handlers,
         { method -> method },
-        { method -> { args -> method.invoke(receiver, *args) } }
+        { method ->
+            { args ->
+                try {
+                    method.invoke(receiver, *args)
+                } catch (ex: InvocationTargetException) {
+                    throw ex.targetException
+                }
+            }
+        }
     )
     val userMethods = listOf(*targetClass.methods) - baseMethods
     userMethods.associateByTo(
